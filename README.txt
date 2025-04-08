@@ -1,7 +1,9 @@
 
 //============================================================================================//
-					Instructions for Use
+			Instructions for Use the Blaster Vibration Control
 //============================================================================================//
+
+
 
 
 //-------------------------------------------------------//
@@ -9,6 +11,11 @@
 //-------------------------------------------------------//
 
 README USER:
+
+	GIS software tool in plugin format for the Qgis program, capable of simulating vibrations, 
+assisting in the safety of rock blasting, as well as plotting isolines with PPV (Peak Particle Velocity)
+values ​​and calculating maximum explosive charge per hole/delay for given distances from critical structures.
+
 
   To use the application in QGIS, follow the instructions below:
 
@@ -48,7 +55,12 @@ README DEV:
 			Português
 //-------------------------------------------------------//
 
-Leia-me (Usuário):
+LEIA-ME (Usuário):
+
+	Ferramenta em software GIS no formato de plugin para o programa Qgis, capaz de simular vibrações,
+auxiliar na segurança do desmonte de rocha além de plotar isolinhas com valores de PPV (Velocidade Pico de Partícula)
+e calcular carga máxima de explosivo por furo/retardo para dadas distâncias de estruturas críticas.
+
 
   Para utilizar a aplicação no QGIS siga as instruções, abaixo:
 	

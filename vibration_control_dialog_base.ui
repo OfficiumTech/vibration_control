@@ -6,40 +6,24 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>549</width>
+    <width>707</width>
     <height>423</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Blaster Vibration Control</string>
   </property>
-  <widget class="QDialogButtonBox" name="button_box">
-   <property name="geometry">
-    <rect>
-     <x>150</x>
-     <y>330</y>
-     <width>341</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-   </property>
-  </widget>
   <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>20</y>
-     <width>551</width>
-     <height>401</height>
+     <y>10</y>
+     <width>701</width>
+     <height>411</height>
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>3</number>
    </property>
    <widget class="QWidget" name="INPUT">
     <property name="focusPolicy">
@@ -156,54 +140,112 @@
       <string>...</string>
      </property>
     </widget>
+    <widget class="QPushButton" name="pushButton_process">
+     <property name="geometry">
+      <rect>
+       <x>600</x>
+       <y>340</y>
+       <width>82</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Process</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="PROCESS">
     <attribute name="title">
      <string>PROCESS</string>
     </attribute>
+    <widget class="QTableWidget" name="tabelaResultados">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>671</width>
+       <height>321</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_txt">
+     <property name="geometry">
+      <rect>
+       <x>480</x>
+       <y>350</y>
+       <width>82</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>export to txt</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_imagem">
+     <property name="geometry">
+      <rect>
+       <x>580</x>
+       <y>350</y>
+       <width>101</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>export to chart</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="OUTPUT">
     <attribute name="title">
      <string>OUTPUT</string>
     </attribute>
    </widget>
+   <widget class="QWidget" name="HELP">
+    <property name="whatsThis">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;HELP&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+    <attribute name="title">
+     <string>HELP</string>
+    </attribute>
+    <widget class="QTextBrowser" name="textHelp">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>681</width>
+       <height>371</height>
+      </rect>
+     </property>
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.15094pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:11pt;&quot;&gt;As camadas de Furo e Geofones devem ser do tipo &amp;quot;pontos&amp;quot; e ter campos na planilha de atributos, como segue abaixo:&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:11pt;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:11pt;&quot;&gt;Furos e Geofones&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:11pt;&quot;&gt;	Identificação do ponto: &amp;quot;Id&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:11pt;&quot;&gt;Furos&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:11pt;&quot;&gt;	Sequência de detonação de cada furo: &amp;quot;Seq. D.&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:11pt;&quot;&gt;	Carga explosiva em KG: &amp;quot;Carga (KG)&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:11pt;&quot;&gt;Geofones&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:11pt;&quot;&gt;	Valores de vibração: &amp;quot;PPV(mm/s)&amp;quot; ou &amp;quot;PVS(mm/s)&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:11pt;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:11pt;&quot;&gt;OBS 1: &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:11pt;&quot;&gt;As geometrias contidas nos shapefiles de Furos e Geofones devem ser 3D (PointZ) para a correta definição das distancias mínimas, caso elas sejam 2D, mas o usuário tenha inserido as cotas Z na tabela de atributos, o plugin solicitará que o usuário diga em qual coluna estão os dados de cota, caso o próprio plugin não a identifique automaticamente; sendo alguns dos shapefiles 2D e não havendo informações de cotas, o usuário poderá escolher a opção &amp;quot;sem cota z&amp;quot;. Nesse caso, os cálculos de distancias serão realizados em uma superfície plana. &lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:'Calibri'; font-size:11pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:11pt;&quot;&gt;OBS 2:&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:11pt;&quot;&gt;A coluna da tabela de atributos  &amp;quot;Seq. D.&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;  é responsável por definir a sequência de saída dos furos durante a detonação. No exemplo abaixo, &lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;um&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; único furo está na sequência &lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;0&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;, seguido por &lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;três furos&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; na sequência &lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;1&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; e por &lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;cinco furos&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt; na sequência &lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;2&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;... Resumindo, furos que detonam simultaneamente, terão o mesmo valor de sequência.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;Nas cituações onde os furos saem &lt;/span&gt;&lt;span style=&quot; font-size:8pt; font-weight:600;&quot;&gt;um por um&lt;/span&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;, só havera um furo detonado por sequência.&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8.15094pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8.15094pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:8.15094pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+   </widget>
   </widget>
-  <zorder>tabWidget</zorder>
-  <zorder>button_box</zorder>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>button_box</sender>
-   <signal>accepted()</signal>
-   <receiver>VibrationControlDialogBase</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>150</x>
-     <y>330</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>button_box</sender>
-   <signal>rejected()</signal>
-   <receiver>VibrationControlDialogBase</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>150</x>
-     <y>330</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

@@ -42,3 +42,21 @@ class VibrationControlDialog(QtWidgets.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+        #self.textHelp.setHtml('<div align="center"><img src=":/plugins/vibration_control/DistanciaMinimaCargaMaxima.png" width="400"></div>')
+        #<img src=":/plugins/vibration_control/DistanciaMinimaCargaMaxima.png" style="width: 100%; height: auto; border: 1px solid #ccc; border-radius: 8px; padding: 5px;">
+        conteudo_atual = self.textHelp.toHtml()
+        # Adiciona a imagem ao final do conteúdo existente
+        html_com_imagem = conteudo_atual + """
+            <div style="text-align: center; margin-top: 15px;">
+                <img src=":/plugins/vibration_control/DistanciaMinimaCargaMaxima.png" width="550";">
+                <div style="font-size: 12px; color: #555; margin-top: 5px;">
+                    Figura: Distância mínima x Carga máxima por sequência
+                </div>
+            </div>
+        """
+        
+
+        self.textHelp.setHtml(html_com_imagem)
+
+       
+

@@ -1,5 +1,8 @@
 <RCC>
-    <qresource prefix="/plugins/vibration_control" >
-        <file>icon.png</file>
-    </qresource>
+  <qresource prefix="/plugins/vibration_control">
+    <file>icon.png</file>
+  </qresource>
+  <qresource prefix="/plugins/vibration_control">
+    <file>DistanciaMinimaCargaMaxima.png</file>
+  </qresource>
 </RCC>

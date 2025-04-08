@@ -25,11 +25,15 @@ from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QFileDialog, QDialog
 from qgis.core import *
+from qgis.core import QgsProject
 from qgis.PyQt.QtCore import QObject
-#from PyQt6.QtCore import QObject  # PyQt6 p/ QGIS mais recente
+from .processamento import *
+from PyQt5.QtWidgets import QTableWidgetItem
+
 
 # Initialize Qt resources from file resources.py
 from .resources import *
+#from .resources_rc import *
 # Import the code for the dialog
 from .vibration_control_dialog import VibrationControlDialog
 import os.path
@@ -38,8 +42,15 @@ import sys, os
 from osgeo import *
 
 
+
+
 class VibrationControl():
     """QGIS Plugin Implementation."""
+    
+    def chamar_processamento(self):
+        camada = self.camadaEscolhida()  # pega a camada escolhida no combo
+        executar_processamento(camada)   # chama a função do outro arquivo
+
 
     def __init__(self, iface):
         """Constructor.
@@ -264,6 +275,8 @@ class VibrationControl():
         return layer
     
     
+    
+       
     #//-------------------------------//
     #//----------Execução-------------//
     #//-------------------------------//
@@ -284,6 +297,14 @@ class VibrationControl():
         self.dlg.toolButton_furos.clicked.connect(self.abrirVetor)
         self.dlg.toolButton_geofones.clicked.connect(self.abrirVetor)
         self.dlg.toolButton_criticas.clicked.connect(self.abrirVetor)
+        #self.dlg.pushButton_process.clicked.connect(lambda: processar_dados(self.dlg))
+        self.dlg.pushButton_process.clicked.connect(lambda: processar_dados(self.iface, self.dlg))
+        #self.dlg.pushButton_txt.clicked.connect(lambda: exportar_tabela_para_txt(self.dlg))
+        #self.dlg.pushButton_imagem.clicked.connect(lambda: gerar_grafico(self.dlg))
+        
+        self.dlg.pushButton_txt.clicked.connect(lambda: exportar_tabela_para_txt(self.dlg.resultados_processados))
+        self.dlg.pushButton_imagem.clicked.connect(lambda: gerar_grafico(self.dlg.resultados_processados))
+
 
 
         # Run the dialog event loop
