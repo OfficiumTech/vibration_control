@@ -25,21 +25,36 @@ from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction, QFileDialog, QDialog
 from qgis.core import *
+from qgis.core import QgsProject
 from qgis.PyQt.QtCore import QObject
-#from PyQt6.QtCore import QObject  # PyQt6 p/ QGIS mais recente
+from .processamento import *
+from PyQt5.QtWidgets import QTableWidgetItem
+from PyQt5.QtGui import QDoubleValidator
 
 # Initialize Qt resources from file resources.py
 from .resources import *
-# Import the code for the dialog
 from .vibration_control_dialog import VibrationControlDialog
 import os.path
 import processing
 import sys, os
 from osgeo import *
+#from .regressao import calcular_lei_atenuacao
+#from .import regressao
+from .simulado import *
+from .estado import resetar_estado_plugin
+from . import regressao_sci
+
+
+
 
 
 class VibrationControl():
     """QGIS Plugin Implementation."""
+    
+    #def chamar_processamento(self):
+        #camada = self.camadaEscolhida()  # pega a camada escolhida no combo
+        #executar_processamento(camada)   # chama a função do outro arquivo
+
 
     def __init__(self, iface):
         """Constructor.
@@ -176,6 +191,7 @@ class VibrationControl():
         # will be set False in run()
         self.first_start = True
 
+    
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
@@ -196,12 +212,23 @@ class VibrationControl():
             selected_furos = self.dlg.comboBox_shpFuros.currentText()
             selected_geofones = self.dlg.comboBox_shpGeofones.currentText()
             selected_criticas = self.dlg.comboBox_shpZCriticas.currentText()
+            selected_topo = self.dlg.comboBox_shpTopo.currentText()
+            selected_furos_sim = self.dlg.comboBox_shpFuros_simular.currentText()
         
         
         #Limpeza das listas dos comboBox
         self.dlg.comboBox_shpFuros.clear()
         self.dlg.comboBox_shpGeofones.clear()
         self.dlg.comboBox_shpZCriticas.clear()
+        self.dlg.comboBox_shpTopo.clear()
+        self.dlg.comboBox_shpFuros_simular.clear()
+        
+        # Adiciona primeiro um item vazio
+        self.dlg.comboBox_shpFuros.addItem("Selecione...")
+        self.dlg.comboBox_shpGeofones.addItem("Selecione...")
+        self.dlg.comboBox_shpZCriticas.addItem("Selecione...")
+        self.dlg.comboBox_shpTopo.addItem("Selecione...")
+        self.dlg.comboBox_shpFuros_simular.addItem("Selecione...")
 
         lista_layers = [layer.name() for layer in QgsProject.instance().mapLayers().values() if layer.type() == QgsMapLayer.VectorLayer]
         
@@ -209,18 +236,39 @@ class VibrationControl():
         self.dlg.comboBox_shpFuros.addItems(lista_layers)
         self.dlg.comboBox_shpGeofones.addItems(lista_layers)
         self.dlg.comboBox_shpZCriticas.addItems(lista_layers)
+        self.dlg.comboBox_shpTopo.addItems(lista_layers)
+        self.dlg.comboBox_shpFuros_simular.addItems(lista_layers)
                
         #Devolve as camadas que já foram selecionadas nos comboBox
         if camada_escolhida != None:
             if destino == "furos":
                 self.dlg.comboBox_shpGeofones.setCurrentText(selected_geofones)
                 self.dlg.comboBox_shpZCriticas.setCurrentText(selected_criticas)
+                self.dlg.comboBox_shpTopo.setCurrentText(selected_topo)
+                self.dlg.comboBox_shpFuros_simular.setCurrentText(selected_furos_sim)
             if destino == "geofones":
                 self.dlg.comboBox_shpFuros.setCurrentText(selected_furos)
                 self.dlg.comboBox_shpZCriticas.setCurrentText(selected_criticas)
+                self.dlg.comboBox_shpTopo.setCurrentText(selected_topo)
+                self.dlg.comboBox_shpFuros_simular.setCurrentText(selected_furos_sim)
             if destino == "zcriticas":
                 self.dlg.comboBox_shpFuros.setCurrentText(selected_furos)
-                self.dlg.comboBox_shpGeofones.setCurrentText(selected_geofones)       
+                self.dlg.comboBox_shpGeofones.setCurrentText(selected_geofones)
+                self.dlg.comboBox_shpTopo.setCurrentText(selected_topo)
+                self.dlg.comboBox_shpFuros_simular.setCurrentText(selected_furos_sim)
+            if destino == "topo":
+                self.dlg.comboBox_shpFuros.setCurrentText(selected_furos)
+                self.dlg.comboBox_shpGeofones.setCurrentText(selected_geofones)
+                self.dlg.comboBox_shpZCriticas.setCurrentText(selected_criticas)
+                self.dlg.comboBox_shpFuros_simular.setCurrentText(selected_furos_sim)
+            if destino == "furos_sim":
+                self.dlg.comboBox_shpFuros.setCurrentText(selected_furos)
+                self.dlg.comboBox_shpGeofones.setCurrentText(selected_geofones)
+                self.dlg.comboBox_shpZCriticas.setCurrentText(selected_criticas)
+                self.dlg.comboBox_shpTopo.setCurrentText(selected_topo)
+                
+                
+                
         
         # Se uma camada foi passada e um destino foi especificado, definir como selecionada
         if camada_escolhida and camada_escolhida in lista_layers:
@@ -230,6 +278,11 @@ class VibrationControl():
                 self.dlg.comboBox_shpGeofones.setCurrentText(camada_escolhida)
             if destino == "zcriticas":
                 self.dlg.comboBox_shpZCriticas.setCurrentText(camada_escolhida)
+            if destino == "topo":
+                self.dlg.comboBox_shpTopo.setCurrentText(camada_escolhida)
+            if destino == "furos_sim":
+                self.dlg.comboBox_shpFuros_simular.setCurrentText(camada_escolhida)
+                
 
 
     
@@ -249,33 +302,54 @@ class VibrationControl():
                 self.carregaComboBox(nome_camada, "geofones")
             if sender_button == self.dlg.toolButton_criticas:
                 self.carregaComboBox(nome_camada, "zcriticas")
+            if sender_button == self.dlg.toolButton_topo:
+                self.carregaComboBox(nome_camada, "topo")
+            if sender_button == self.dlg.toolButton_furos_simular:  
+                self.carregaComboBox(nome_camada, "furos_sim")
 
     
-    
 
-    """Captura o layer escolhido pelo usuário"""
-    def camadaEscolhida(self):
-        layer = None
-        nomecamada = self.dlg.comboBox_shpZCriticas.currentText() #Layer escolhido pelo usuário
-        for lyr in QgsProject.instance().mapLayers().values():
-            if lyr.name() == nomecamada:
-                layer = lyr
-                break
-        return layer
-    
-    
+    '''def executar_regressao(self):
+        try:
+            # Garante que os resultados foram processados antes
+            if not hasattr(self.dlg, "resultados_processados"):
+                raise Exception("Resultados não encontrados. Execute o processamento primeiro.")
+
+            try:
+                #from . import regressao_sci
+                regressao_sci.calcular_regressao(self.dlg)
+            except:
+                from . import regressao_numpy
+                regressao_numpy.calcular_regressao(self.dlg)
+            
+
+        except Exception as e:
+            from PyQt5.QtWidgets import QMessageBox
+            QMessageBox.critical(None, "Erro", str(e))'''
+
+
+
+
+
+
+
+       
     #//-------------------------------//
     #//----------Execução-------------//
     #//-------------------------------//
     def run(self):
         """Run method that performs all the real work"""
 
+        #Reinicia o plugin
+        #resetar_estado_plugin(self)
+        
         # Create the dialog with elements (after translation) and keep reference
         # Only create GUI ONCE in callback, so that it will only load when the plugin is started
         if self.first_start == True:
             self.first_start = False
-            self.dlg = VibrationControlDialog()
-
+            #self.dlg = VibrationControlDialog()
+        
+        self.dlg = VibrationControlDialog()
         # show the dialog
         self.dlg.show()
 
@@ -284,6 +358,26 @@ class VibrationControl():
         self.dlg.toolButton_furos.clicked.connect(self.abrirVetor)
         self.dlg.toolButton_geofones.clicked.connect(self.abrirVetor)
         self.dlg.toolButton_criticas.clicked.connect(self.abrirVetor)
+        self.dlg.toolButton_topo.clicked.connect(self.abrirVetor)
+        self.dlg.toolButton_furos_simular.clicked.connect(self.abrirVetor)
+        
+        
+        self.dlg.pushButton_process.clicked.connect(lambda: processar_dados(self.iface, self.dlg))       
+        self.dlg.pushButton_txt.clicked.connect(lambda: exportar_tabela_para_txt(self.dlg.resultados_processados))
+        self.dlg.pushButton_imagem.clicked.connect(lambda: gerar_grafico(self.dlg.resultados_processados))
+        #self.dlg.pushButton_leiAtenuacao.clicked.connect(self.executar_regressao)
+        self.dlg.pushButton_leiAtenuacao.clicked.connect(lambda: regressao_sci.calcular_regressao(self.dlg))
+        self.dlg.pushButton_interp_graf.clicked.connect(lambda: regressao_sci.gerar_grafico_ajuste_ui(self.dlg))
+        self.dlg.pushButton_simular.clicked.connect(lambda: executar_simulacao(self.dlg, self.iface))
+        self.dlg.pushButton_intxt.clicked.connect(lambda: importar_resultados_excel(self.dlg))
+        
+        
+        # Para capturar o valor de PPV(mm/s) entre linhas
+        validator = QDoubleValidator(0.0, 999.99, 2)  # min, max, casas decimais
+        validator.setNotation(QDoubleValidator.StandardNotation)
+        self.dlg.lineEdit_iso.setValidator(validator)
+    
+
 
 
         # Run the dialog event loop
