@@ -7,9 +7,20 @@ import traceback
 import time
 from datetime import datetime
 from qgis import processing
+import tempfile
+from osgeo import gdal, osr
 
 
 from qgis.core import (
+    QgsApplication,
+    QgsColorRamp,
+    QgsGradientColorRamp,
+    QgsStyle,
+    QgsSymbolLayerUtils,
+    QgsPalettedRasterRenderer,
+    QgsSingleBandPseudoColorRenderer,
+    QgsColorRampShader,
+    QgsRasterShader,
     edit,
     QgsPalLayerSettings,
     QgsProcessingFeedback,
@@ -41,31 +52,115 @@ from qgis.core import (
 )
 
 from qgis.PyQt.QtWidgets import QApplication
+from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import QMessageBox, QInputDialog
 from PyQt5.QtCore import QVariant, QCoreApplication
 #from qgis.PyQt.QtCore import QVariant
 #from qgis.core import QgsProject
 #from PyQt5.QtCore import QCoreApplication  # Progress Bar
 from .processamento_sim import *
+from .variograma import ajustar_variograma
+from .krigagem import krigagemF
 
+def verificar_pykrige():
+    try:
+        from pykrige.ok import OrdinaryKriging
 
-try:
-    from pykrige.ok import OrdinaryKriging
-    krige_disponivel = True
-except ImportError:
-    krige_disponivel = False
+        # Cria uma janela popup perguntando ao usuário se deseja usar Krigagem
+        msg_box = QMessageBox()
+        msg_box.setWindowTitle("PyKrige disponível")
+        msg_box.setText("A biblioteca PyKrige está disponível nesta instalação.\n'OK' para usar krigagem ou 'Cancel' para usar IDW")
+        msg_box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        msg_box.setDefaultButton(QMessageBox.Ok)
+        resposta = msg_box.exec_()
 
+        if resposta == QMessageBox.Ok:
+            krige_disponivel = True
+        else:
+            krige_disponivel = False
+
+    except ImportError:
+        krige_disponivel = False
+    
+    return krige_disponivel
+
+def plotar_grade_xy_no_qgis(grid_x, grid_y, iface):
+    """
+    Cria e plota uma camada temporária de pontos no QGIS representando a grade (grid_x, grid_y).
+    
+    Argumentos:
+    - grid_x, grid_y: matrizes numpy de coordenadas X e Y da grade (np.meshgrid).
+    - iface: interface do QGIS.
+    """
+    # 1. Verifica dimensões
+    n_rows, n_cols = grid_x.shape
+    
+    # 2. Cria camada de ponto temporária (geometry type e crs)
+    crs_proj = QgsProject.instance().crs().authid()  # Ex: 'EPSG:31983'
+    camada = QgsVectorLayer(f'Point?crs={crs_proj}', 'Grade XY', 'memory')
+    prov = camada.dataProvider()
+    
+    # 3. Define campos (atributos)
+    campos = QgsFields()
+    campos.append(QgsField('id', QVariant.Int))
+    campos.append(QgsField('x', QVariant.Double))
+    campos.append(QgsField('y', QVariant.Double))
+    prov.addAttributes(campos)
+    camada.updateFields()
+    
+    # 4. Cria features para cada ponto da grade
+    features = []
+    contador = 0
+    for i in range(n_rows):
+        for j in range(n_cols):
+            x = float(grid_x[i, j])
+            y = float(grid_y[i, j])
+            ponto = QgsPointXY(x, y)
+            geom = QgsGeometry.fromPointXY(ponto)
+            feat = QgsFeature()
+            feat.setGeometry(geom)
+            feat.setAttributes([contador, x, y])
+            features.append(feat)
+            contador += 1
+
+    # 5. Adiciona à camada e ao QGIS
+    prov.addFeatures(features)
+    camada.updateExtents()
+    QgsProject.instance().addMapLayer(camada)
+    log(f"Grade plotada, {contador} pontos adicionados.")
+
+def plotar_pontos(x, y, z, v):
+    # Cria camada de ponto Z temporária
+    crs = QgsProject.instance().crs().authid()
+    vl = QgsVectorLayer(f"Point?crs={crs}", "PPV_pontos", "memory")
+    #vl = QgsVectorLayer("PointZ?crs=EPSG:31983", "PPV_pontos", "memory")
+    pr = vl.dataProvider()
+    
+    # Adiciona campo PPV
+    pr.addAttributes([QgsField("PPV", QVariant.Double)])
+    vl.updateFields()
+
+    # Cria e adiciona as feições
+    feats = []
+    for xi, yi, zi, vi in zip(x, y, z, v):
+        pt = QgsPoint(xi, yi, zi)
+        feat = QgsFeature()
+        feat.setGeometry(QgsGeometry.fromPoint(pt))
+        feat.setAttributes([vi])
+        feats.append(feat)
+
+    pr.addFeatures(feats)
+    vl.updateExtents()
+    QgsProject.instance().addMapLayer(vl)
 
 def log(mensagem):
     QMessageBox.information(None, "Simulado - Blaster Vibration Control", mensagem)
-
 
 def obter_camada_por_nome(nome):
     for camada in QgsProject.instance().mapLayers().values():
         if camada.name() == nome:
             return camada
     return None
-
 
 def obter_campo_z(layer):
     # Se a geometria for 2D, busca campo z na tabela de atributos
@@ -85,15 +180,12 @@ def obter_campo_z(layer):
         return campo if campo != "Sem cota z" else None
     return None
 
-
 def distancia_3d(xf, yf, zf, xi, yi, zi):
     return math.sqrt((xf - xi) ** 2 + (yf - yi) ** 2 + (zf - zi) ** 2)
 
-
 def distancia_3d_quadrado(xf, yf, zf, xi, yi, zi):
     return ((xf - xi) ** 2 + (yf - yi) ** 2 + (zf - zi) ** 2)
-    
-    
+       
 def gerar_malha(area_poligono, resolucao=20):
     # Cria uma malha de pontos dentro do polígono com espaçamento (em metros)
     #extent = area_poligono.extent()
@@ -112,7 +204,6 @@ def gerar_malha(area_poligono, resolucao=20):
             y += resolucao
         x += resolucao
     return pontos
-
 
 def interpolar_ppv(pontos, valores, grid_x, grid_y, grid_z, uii):
     if krige_disponivel and grid_z is not None:
@@ -171,7 +262,6 @@ def interpolar_ppv(pontos, valores, grid_x, grid_y, grid_z, uii):
         uii.progressBar_forPonto.setValue(100)
         return z_interp  # shape: (len(grid_z), len(grid_y), len(grid_x))
 
-
 def obter_z_do_furo_mais_proximo(xi, yi, resultados_processados, log_func):
     """
     Retorna a cota Z do furo mais próximo ao ponto (xi, yi).
@@ -213,85 +303,6 @@ def obter_z_do_furo_mais_proximo(xi, yi, resultados_processados, log_func):
 
     return zi
 
-
-def salvar_shapefile(grid, xs, ys, crs_authid, zs=None, nome_arquivo="simulacao_ppv.shp"):
-    """
-    Salva os dados de PPV em um shapefile de pontos e adiciona ao projeto QGIS.
-    """
-    try:
-        pasta_projeto = QgsProject.instance().homePath()
-        caminho_completo = os.path.join(pasta_projeto, nome_arquivo)
-
-        campos = QgsFields()
-        campos.append(QgsField("PPV", QVariant.Double))
-
-        is_3d = (zs is not None and len(grid.shape) == 3)
-        if is_3d:
-            campos.append(QgsField("Z", QVariant.Double))
-
-        if not crs_authid:
-            crs_authid = QgsProject.instance().crs().authid()
-
-        crs = QgsCoordinateReferenceSystem(crs_authid)
-        tipo_geom = QgsWkbTypes.PointZ if is_3d else QgsWkbTypes.Point
-
-        writer = QgsVectorFileWriter(
-            caminho_completo, "UTF-8", campos, tipo_geom, crs, "ESRI Shapefile"
-        )
-
-        if writer.hasError() != QgsVectorFileWriter.NoError:
-            raise Exception(f"Erro ao criar o shapefile: {writer.errorMessage()}")
-
-        # ✅ Contador de pontos salvos
-        contador_pontos = 0
-
-        if is_3d:
-            for k, z in enumerate(zs):
-                for i, y in enumerate(ys):
-                    for j, x in enumerate(xs):
-                        valor = grid[k][i][j]
-                        if np.isnan(valor): #Debug
-                            log(f"Valor NaN encontrado em ({x}, {y}, {z if zs else 'N/A'}): {valor}")
-                        if not np.isnan(valor):
-                            ponto = QgsPoint(x, y, z)
-                            geometria = QgsGeometry.fromPoint(ponto)
-                            feature = QgsFeature()
-                            feature.setGeometry(geometria)
-                            feature.setAttributes([float(valor), float(z)])
-                            writer.addFeature(feature)
-                            contador_pontos += 1  # incrementa contador
-        else:
-            for i, y in enumerate(ys):
-                for j, x in enumerate(xs):
-                    valor = grid[i][j]
-                    if not np.isnan(valor):
-                        ponto = QgsPointXY(x, y)
-                        geometria = QgsGeometry.fromPointXY(ponto)
-                        feature = QgsFeature()
-                        feature.setGeometry(geometria)
-                        feature.setAttributes([float(valor)])
-                        writer.addFeature(feature)
-                        contador_pontos += 1  # incrementa contador
-
-        del writer
-
-        log(f"✅ Shapefile salvo com {contador_pontos} pontos.")  # ✅ Log de pontos salvos
-
-        camada = QgsVectorLayer(caminho_completo, nome_arquivo.replace(".shp", ""), "ogr")
-        if not camada.isValid():
-            raise Exception("Erro ao carregar o shapefile salvo no projeto.")
-
-        QgsProject.instance().addMapLayer(camada)
-        # 💡 Aplicar estilo leve para melhorar desempenho na visualização
-        symbol = camada.renderer().symbol()
-        symbol.setSize(0.2)  # Tamanho pequeno para muitos pontos
-        symbol.setColor(QColor("blue"))  # Cor discreta
-        camada.triggerRepaint()
-
-    except Exception as e:
-        log(f"❌ Erro ao salvar shapefile: {str(e)}")
-
-
 def medir_tempo(func):
     def wrapper(*args, **kwargs):
         inicio = time.time()
@@ -300,8 +311,7 @@ def medir_tempo(func):
         print(f"[{func.__name__}] Tempo de execução: {fim - inicio:.2f} segundos")
         return resultado
     return wrapper
-
-    
+   
 def dentro_triangulo(dicionario_vertices, xi, yi, ids):
     pSim_x = xi
     pSim_y = yi
@@ -338,7 +348,6 @@ def dentro_triangulo(dicionario_vertices, xi, yi, ids):
 
     return None
 
-
 def arredonda_campo(layer: QgsVectorLayer, nome_campo: str):
     """Arredonda os valores do campo especificado e aplica rótulos à camada."""
     provider = layer.dataProvider()
@@ -374,10 +383,61 @@ def arredonda_campo(layer: QgsVectorLayer, nome_campo: str):
         layer.setLabeling(label_settings)
         layer.setLabelsEnabled(True)
         layer.triggerRepaint()
-        #log(f"✅ Campo '{nome_campo}' arredondado e rótulos aplicados.")
-    
-    
-def gerar_curvas_isovalores(pontos_ppv, valores_ppv, camada_base, nome_raster_saida, nome_curvas_saida, log, uii):
+
+# Aplica simbologia a camada raster
+def conf_raster(layer, valores_ppv, Output_Layer_Name):
+    if not isinstance(layer, QgsRasterLayer):
+        log("A camada fornecida não é um raster.")
+        return
+
+    # Obter estatísticas da banda 1
+    stats = layer.dataProvider().bandStatistics(1)
+    minVal = stats.minimumValue
+    maxVal = stats.maximumValue
+
+    if minVal == maxVal:
+        log("Valores mínimos e máximos são iguais. Não é possível aplicar rampa de cor.")
+        return
+
+    # Obter estilo de cor
+    #qgis_version = QgsApplication.qgisVersion()
+    style = QgsStyle().defaultStyle()
+    ramp_name = 'RdYlGn'
+
+    if not style.colorRampNames().__contains__(ramp_name):
+        log(f"Rampa de cor '{ramp_name}' não encontrada no estilo do QGIS.")
+        return
+
+    ramp = style.colorRamp(ramp_name)
+
+    # Criar renderer===================================================== Novo
+    color_shader = QgsColorRampShader() # Define um shader com valores únicos (discretos)
+    color_shader.setColorRampType(QgsColorRampShader.Discrete)  # ou Interpolated, se preferir
+
+    # Gera uma rampa 'Spectral' automaticamente com os valores únicos
+    entries = []
+    valores_unicos = sorted(set(valores_ppv))
+    ramp = QgsStyle().defaultStyle().colorRamp('Spectral')  # usa a rampa 'Spectral' do QGIS
+
+    # Cria entradas discretas associando cada valor a uma cor da rampa
+    for i, val in enumerate(valores_unicos):
+        cor = ramp.color(float(i) / max(1, len(valores_unicos)-1))
+        entries.append(QgsColorRampShader.ColorRampItem(val, cor, str(round(val, 2))))
+
+    color_shader.setColorRampItemList(entries)
+
+    # Aplica o renderizador com o shader
+    raster_shader = QgsRasterShader()
+    raster_shader.setRasterShaderFunction(color_shader)    # Envolver no shader raster
+    renderer = QgsSingleBandPseudoColorRenderer(
+        layer.dataProvider(), 1, raster_shader
+    )
+    layer.setRenderer(renderer)
+    layer.setName(Output_Layer_Name)
+    layer.triggerRepaint()
+
+#Faz a interpolação
+def gerar_curvas_isovalores(pontos_ppv, valores_ppv, camada_base, log, uii, resolucao):
     """
     Gera curvas de isovalores (contornos) de PPV a partir de pontos de vibração e valores,
     utilizando interpolação 3D (Kriging ou IDW), gera raster temporário e curvas com GDAL.
@@ -391,60 +451,130 @@ def gerar_curvas_isovalores(pontos_ppv, valores_ppv, camada_base, nome_raster_sa
     - log: função para registrar mensagens no UI
     - uii: objeto da interface com barra de progresso
     """
+    
+    #Cota Z
+    def cota(tolerancia, x, y, z, x0, y0):
+        raioBusca = tolerancia
+        dists = np.sqrt((x - x0)**2 + (y - y0)**2)
+        minVizinho = 0
+
+        while minVizinho <= 5:
+            mask = dists <= raioBusca
+            minVizinho = np.sum(mask)
+
+            raioBusca += 20
+            if raioBusca >= 500:
+                break
+
+        if raioBusca > 500 and minVizinho <= 5:
+            return None
+
+        # Calcula a interpolação
+        dists_vizinhos = dists[mask]
+        z_vizinhos = z[mask]
+
+        if np.any(dists_vizinhos == 0):
+            zinterpolado = np.mean(z_vizinhos[dists_vizinhos == 0])
+        else:
+            pesos = 1 / dists_vizinhos**2
+            zinterpolado = np.sum(pesos * z_vizinhos) / np.sum(pesos)
+            
+        return zinterpolado
+    #Fim Cota============================
+    
+    
+    
     try:
-        # Converte dados de entrada em arrays numpy para facilitar a manipulação
+        # Converte dados calculados de entrada em arrays numpy para facilitar a manipulação
         x = np.array([p[0] for p in pontos_ppv])
         y = np.array([p[1] for p in pontos_ppv])
         z = np.array([p[2] for p in pontos_ppv])
         v = np.array(valores_ppv)
+        
+        # Adiciona ao projeto para depuração
+        #plotar_pontos(x, y, z, v)
 
-        # Define resolução e cria a grade regular 2D (XY)
+        # Define resolução e cria a grade regular a partir das coordenadas calculadas 'pontos_ppv'
         grid_res = 10  # tamanho de célula em metros (10x10m)
         xi = np.arange(x.min(), x.max(), grid_res)
         yi = np.arange(y.min(), y.max(), grid_res)
-        zi = np.arange(z.min(), z.max(), grid_res)  # usado para Kriging 3D
+        zi = np.arange(z.min(), z.max(), grid_res) 
         grid_x, grid_y = np.meshgrid(xi, yi)
-
+        
+        #plotar_grade_xy_no_qgis(grid_x, grid_y, uii) #Verificar a malha
+        
+        krige_disponivel = verificar_pykrige() #Verifica se a biblioteca pykrige está presente e se o usuário deseja usá-la
+        
+        
+        #=== Interpolação por PyKrige  ===========================================================#
+        #=========================================================================================#
+        
         try:
-            # Interpolação com PyKrige 3D (se disponível)
+            # Interpolação com PyKrige (se disponível)
             if krige_disponivel:
-                from pykrige.ok3d import OrdinaryKriging3D
+                from pykrige.ok import OrdinaryKriging
+                
+                # Chama a interface de ajuste de semi-variograma-----------------------------------
+                coords = list(zip(x, y, z))
+                valores = v
+                           
+                nugget, sill, range_, modelo, exponent, scale = ajustar_variograma(coords, valores)
+                if None in (nugget, sill, range_, modelo):
+                    log("⚠️ Ajuste do variograma cancelado. Usando IDW como fallback.")
+                    raise ValueError("Ajuste cancelado.")
+  
+                log(f"📊 Parâmetros ajustados: modelo={modelo}, nugget={nugget:.3f}, sill={sill:.3f}, range={range_:.2f}")
+                # Fim ajuste-----------------------------------------------------------------------
+                
+                # Chama a função que faz Krigagem--------------------------------------------------
+                #include_z_as_var=interpolaZ,
+                interpolaZ = False
+                grid_result = krigagemF(nugget=nugget, sill=sill, range_=range_, 
+                    modelo=modelo, exponent=exponent, scale=scale, x=x, y=y, z=z, v=v, 
+                    grid_x=grid_x, grid_y=grid_y, uii=uii, tolerancia=100, log=log
+                    )
+                
+                # Verificar  NaN
+                if np.isnan(grid_result).sum() > (grid_result.size / 2):
+                    log("⚠️ Mais da metade do resultado da krigagem contém NaN. Usando IDW como fallback.")
+                    raise ValueError("Resultado da krigagem inválido.")
 
-                OK = OrdinaryKriging3D(x, y, z, v, variogram_model='linear')
-                grid3d, ss3d = OK.execute('grid', xi, yi, zi)
-
-                # Seleciona apenas a primeira fatia da interpolação em Z (nível fixo)
-                grid_result = grid3d[:, :, 0]
-
-                # Atualiza progressBar em 50% (considerando interpolação concluída)
-                uii.progressBar_forPonto.setValue(80)
-                log("✅ Interpolação com PyKrige 3D concluída.")
+                log("✅ Interpolação por Krigagem concluída.")
+                #-----------------------------------------------------------------------------------
+                
             else:
-                raise ImportError("PyKrige não disponível")
+                raise ImportError("Biblioteca PyKrige não disponível")
 
+        
+        #=== Interpolação por IDW  ===========================================================#
+        #=====================================================================================#
+        
         except Exception as e:
+            tb = traceback.format_exc()
             # Fallback: Interpolação IDW 3D manual
-            log(f"⚠️ Erro ao usar PyKrige 3D: {str(e)}. Usando IDW 3D como fallback.")
+            log(f"⚠️ Interpolando por IDW 3D como fallback. \nERRO: \n{e} \nTraceback:\n{tb}")
             grid_result = np.zeros_like(grid_x, dtype=float)
 
             # Empilha coordenadas em um único array (Nx3)
-            coords = np.column_stack((x, y, z))
-            num_pontos = coords.shape[0]
-
-            # Total de pontos da grade (para barra de progresso)
-            total_celulas = grid_x.shape[0] * grid_x.shape[1]
+            coords_interp = np.column_stack((x, y, z))
+            num_pontos = coords_interp.shape[0]
+            total_celulas = grid_x.size # Total de pontos da grade (para barra de progresso)
             celulas_processadas = 0
 
+            distPegaCota = 20
             for i in range(grid_x.shape[0]):
                 for j in range(grid_x.shape[1]):
-                    # Coordenada do ponto da grade
-                    px, py = grid_x[i, j], grid_y[i, j]
-                    pz = np.mean(z)  # usar média de z (ou ajustar com topografia real)
+                    px = grid_x[i, j] # Coordenada do ponto da grade
+                    py = grid_y[i, j]
+                    pz = cota(distPegaCota, x, y, z, px, py)
+                    
+                    if pz == None or np.isnan(pz):
+                        continue
 
                     # Calcula distâncias 3D entre o ponto da grade e os pontos conhecidos
-                    distancias = np.sqrt((coords[:, 0] - px)**2 +
-                                         (coords[:, 1] - py)**2 +
-                                         (coords[:, 2] - pz)**2)
+                    distancias = np.sqrt((coords_interp[:, 0] - px)**2 +
+                                         (coords_interp[:, 1] - py)**2 +
+                                         (coords_interp[:, 2] - pz)**2)
 
                     # Seleciona os 5 vizinhos mais próximos
                     k = min(5, num_pontos)
@@ -455,7 +585,7 @@ def gerar_curvas_isovalores(pontos_ppv, valores_ppv, camada_base, nome_raster_sa
                     if np.any(dist_vizinhos == 0):
                         grid_result[i, j] = np.mean(v[idx][dist_vizinhos == 0])
                     else:
-                        pesos = 1 / dist_vizinhos
+                        pesos = 1 / dist_vizinhos**2
                         grid_result[i, j] = round(np.sum(pesos * v[idx]) / np.sum(pesos), 3)
 
                     # Atualiza barra de progresso a cada 1% concluído
@@ -465,55 +595,136 @@ def gerar_curvas_isovalores(pontos_ppv, valores_ppv, camada_base, nome_raster_sa
                         uii.progressBar_forPonto.setValue(min(progresso, 99))  # deixa 100% para final
                         QCoreApplication.processEvents()
 
-        # === Exporta grade interpolada como raster temporário ==========================================
-        import tempfile
-        from osgeo import gdal, osr
-
-        # Dimensões do grid interpolado
-        nrows, ncols = grid_result.shape
-        x_min, x_max = xi.min(), xi.max()
-        y_min, y_max = yi.min(), yi.max()
-        pixel_size = grid_res # Tamanho do pixel em metros
 
 
-        #Criar camada única com data e hora
-        agora = datetime.now()
-        timestamp = agora.strftime("%Y%m%d_%H%M%S")  # 20250505_153022
-        nome_raster_saida = f"raster_ppv_{timestamp}.tif"
-        # Caminho temporário onde o raster será salvo
-        raster_path = os.path.join(tempfile.gettempdir(), nome_raster_saida)
+        #=== Exporta grade interpolada como raster  ==========================================#
+        #=====================================================================================#
+        def gera_raster_2e3D(grid_result, grid_res, xi, yi, camada_base, uii, valores_ppv=None, log=print):
+            # Detecta dimensões do grid_result
+            if grid_result.ndim == 2:
+                nrows, ncols = grid_result.shape
+                nbands = 1
+            elif grid_result.ndim == 3:
+                nrows, ncols, nbands = grid_result.shape
+            else:
+                raise ValueError("grid_result deve ser 2D (nx,ny) ou 3D (nx,ny,n_bandas)")
 
-        # Criação do GeoTIFF com GDAL
-        driver = gdal.GetDriverByName('GTiff')
-        dataset = driver.Create(raster_path, ncols, nrows, 1, gdal.GDT_Float32)
-        dataset.GetRasterBand(1).WriteArray(grid_result[::-1])  # inverte eixo Y (imagem)#-0-
+            # Extremos / resolução (preservo suas variáveis xi, yi, grid_res)
+            x_min, x_max = xi.min(), xi.max()
+            y_min, y_max = yi.min(), yi.max()
+            pixel_size = grid_res  # Tamanho do pixel em metros
 
-        #-0- Escreve os dados no raster — sem inversão vertical, para manter orientação correta dos valores
-        #dataset.GetRasterBand(1).WriteArray(grid_result)
+            # Nome do arquivo
+            agora = datetime.now()
+            timestamp = agora.strftime("%Y%m%d_%H%M%S")
+            nome_raster_saida = f"raster_ppv_{timestamp}.tif"
+            raster_path = os.path.join(tempfile.gettempdir(), nome_raster_saida)
 
-        # Define a transformação geoespacial: origem no canto superior esquerdo e resolução
-        # O valor negativo no eixo Y indica que os pixels crescem de cima para baixo, como esperado pelo QGIS
-        dataset.SetGeoTransform((x_min, pixel_size, 0, y_max, 0, -pixel_size))
+            # Cria GeoTIFF com número de bandas adequado
+            driver = gdal.GetDriverByName('GTiff')
+            dataset = driver.Create(raster_path, ncols, nrows, nbands, gdal.GDT_Float32)
 
-        # Define o sistema de coordenadas do raster com base na camada base
-        srs = osr.SpatialReference()
-        srs.ImportFromWkt(camada_base.crs().toWkt())
-        dataset.SetProjection(srs.ExportToWkt())
+            # Definir nodata e escrever bandas
+            nodata = -9999.0
 
-        # Finaliza e salva o raster
-        dataset.FlushCache()
-        dataset = None
+            if nbands == 1:
+                arr = np.array(grid_result, dtype=np.float32)
+                # substituir NaN por nodata e inverter eixo Y
+                arr_write = np.where(np.isfinite(arr), arr, nodata)[::-1, :]
+                band = dataset.GetRasterBand(1)
+                band.WriteArray(arr_write)
+                band.SetNoDataValue(nodata)
+            else:
+                # multibanda: escreve cada banda
+                for b in range(nbands):
+                    arr = np.array(grid_result[:, :, b], dtype=np.float32)
+                    arr_write = np.where(np.isfinite(arr), arr, nodata)[::-1, :]
+                    band = dataset.GetRasterBand(b + 1)
+                    band.WriteArray(arr_write)
+                    band.SetNoDataValue(nodata)
 
-        # Conclui barra de progresso
-        uii.progressBar_forPonto.setValue(100)
+            # Define a transformação geoespacial (origem canto superior esquerdo)
+            # nota: driver.Create usa (xsize=ncols, ysize=nrows)
+            dataset.SetGeoTransform((x_min, pixel_size, 0, y_max, 0, -pixel_size))
 
-        log(f"✅ Raster de PPV salvo em: {raster_path}")
+            # Define sistema de referência com base na camada base
+            srs = osr.SpatialReference()
+            srs.ImportFromWkt(camada_base.crs().toWkt())
+            dataset.SetProjection(srs.ExportToWkt())
+
+            # Finaliza e salva
+            dataset.FlushCache()
+            dataset = None
+
+            # Carrega no QGIS
+            raster_layer = QgsRasterLayer(raster_path, "Raster PPV")
+            if raster_layer.isValid():
+                QgsProject.instance().addMapLayer(raster_layer)
+                # tenta aplicar simbologia só se conf_raster existir e for chamável
+                try:
+                    # se existir variável valores_ppv no escopo, usa-a; senão, chama sem ela
+                    if 'valores_ppv' in globals() or 'valores_ppv' in locals():
+                        conf_raster(raster_layer, valores_ppv, "Raster PPV_R")
+                    else:
+                        # se for multibanda, você talvez queira aplicar simbologia na banda 1
+                        conf_raster(raster_layer, None, "Raster PPV_R")
+                except Exception:
+                    # se conf_raster não existir ou falhar, apenas ignore
+                    pass
+
+            uii.progressBar_forPonto.setValue(100)
+            log(f"✅ Raster de PPV salvo em: {raster_path}")
+            
+            return raster_layer
+    
+        def gera_raster(grid_result, grid_res, xi, yi, camada_base, uii, valores_ppv=None, log=print):
+            # Dimensões do grid interpolado ------------------------------------------------------
+            nrows, ncols = grid_result.shape
+            x_min, x_max = xi.min(), xi.max()
+            y_min, y_max = yi.min(), yi.max()
+            pixel_size = grid_res # Tamanho do pixel em metros
+
+
+            #Criar nome raster único com data e hora ---------------------------------------------
+            agora = datetime.now()
+            timestamp = agora.strftime("%Y%m%d_%H%M%S")  # 20250505_153022
+            nome_raster_saida = f"raster_ppv_{timestamp}.tif"
+            raster_path = os.path.join(tempfile.gettempdir(), nome_raster_saida)    # Caminho temporário onde o raster será salvo
+
+            # Criação do GeoTIFF com GDAL --------------------------------------------------------
+            driver = gdal.GetDriverByName('GTiff')
+            dataset = driver.Create(raster_path, ncols, nrows, 1, gdal.GDT_Float32) # O '1' é o nmr de bandas
+            dataset.GetRasterBand(1).WriteArray(grid_result[::-1])  # '[::-1]' inverte eixo Y (imagem)
+
+            # Define a transformação geoespacial: origem no canto superior esquerdo e resolução---
+            # O valor negativo no 'pixel_size' indica que os pixels crescem de cima para baixo, como esperado pelo QGIS
+            dataset.SetGeoTransform((x_min, pixel_size, 0, y_max, 0, -pixel_size))
+
+            # Define o sistema de coordenadas do raster com base na camada base-------------------
+            srs = osr.SpatialReference()
+            srs.ImportFromWkt(camada_base.crs().toWkt())
+            dataset.SetProjection(srs.ExportToWkt())
+
+            # Finaliza e salva o raster ----------------------------------------------------------
+            dataset.FlushCache()
+            dataset = None
+
+            # Carrega raster no QGIS -------------------------------------------------------------
+            raster_layer = QgsRasterLayer(raster_path, "Raster PPV")
+            if raster_layer.isValid():
+                #valores_ppv = grid_result.flatten().tolist()
+                QgsProject.instance().addMapLayer(raster_layer)
+                conf_raster(raster_layer, valores_ppv, "Raster PPV_R") # Aplica simbologia ao raster
+            uii.progressBar_forPonto.setValue(100)  # Conclui barra de progresso
+            log(f"✅ Raster de PPV salvo em: {raster_path}")
         
-        # Carrega raster no QGIS
-        raster_layer = QgsRasterLayer(raster_path, "Raster PPV")
-        QgsProject.instance().addMapLayer(raster_layer)
+        raster_layer = gera_raster_2e3D(grid_result, grid_res, xi, yi, camada_base, uii, valores_ppv, log)
 
-        # === Geração de curvas de nível (contorno) ============================================
+
+
+        #=== Geração de curvas de nível (contorno) ===========================================#
+        #=====================================================================================#
+        
         v = np.array([float(val) for val in valores_ppv])
         
         intervalo = float(0.5)  # valor padrão
@@ -525,10 +736,10 @@ def gerar_curvas_isovalores(pontos_ppv, valores_ppv, camada_base, nome_raster_sa
                 intervalo = float(0.1)
             #log(f"Intervalo PPV = {intervalo} mm/s")
         except: #
-            log(f"Campo de espaçamento entre linhas vazio. Usando valor padrão ({intervalo} mm/s).")
+            #log(f"Campo de espaçamento entre linhas vazio. Usando valor padrão ({intervalo} mm/s).")
             intervalo = float(0.5)
-        
-        #Criar camada única com data e hora
+
+        # Criar camada única com data e hora
         agora = datetime.now()
         timestamp = agora.strftime("%Y%m%d_%H%M%S")  # 20250505_153022
         nome_curvas_saida = f"curvas_ppv_{timestamp}.shp"
@@ -559,7 +770,7 @@ def gerar_curvas_isovalores(pontos_ppv, valores_ppv, camada_base, nome_raster_sa
         
         processing.run("qgis:smoothgeometry", {
             'INPUT': output_curvas,
-            'ITERATIONS': 3,  # número de iterações (2–5 costuma ser suficiente)
+            'ITERATIONS': 2,  # número de iterações (2–5 costuma ser suficiente)
             'OFFSET': 0.25,   # fator de suavização (ajuste conforme necessário)
             'MAX_ANGLE': 180, # ângulo máximo entre segmentos (opcional)
             'OUTPUT': output_curvasS
@@ -568,22 +779,26 @@ def gerar_curvas_isovalores(pontos_ppv, valores_ppv, camada_base, nome_raster_sa
         log(f"✅ Curvas de isovalores salvas em: {output_curvasS}")
         
         
-        # Adiciona as curvas ao projeto
-        curvas_layer = QgsVectorLayer(output_curvasS, "Curvas PPV", "ogr")
-        QgsProject.instance().addMapLayer(curvas_layer)
-
-        # ⚠️ Força carregamento dos campos para garantir acesso ao campo 'PPV'
-        curvas_layer.dataProvider().reloadData()
+        # ========Adiciona as curvas ao projeto==========================================
+        curvas_layer = QgsVectorLayer(output_curvasS, "Curvas PPV", "ogr")   
+        if not curvas_layer.isValid():
+            log("⚠️ Erro ao carregar camada de curvas.")
+        else:
+            curvas_layer.setSubsetString('"PPV" <= 20') # Corta isolinhas com valores abaixo de 10
+            QgsProject.instance().addMapLayer(curvas_layer)
         #-----------------------------------------------------------------------
-        
-        # Arredonda e aplica os valores do campo 'PPV'
+        # Força carregamento dos campos para garantir acesso ao campo 'PPV'
+        curvas_layer.dataProvider().reloadData()
+
+        # Arredonda e aplica os valores do campo 'PPV'--------------------------
         arredonda_campo(curvas_layer, 'PPV')
+        
     except Exception as e: 
         tb = traceback.format_exc()                        
         log(f"⚠️ Erro na curva de isovalores: {e} \nTraceback:\n{tb}")
 
 # Cria o indice espacial da camada de topografia
-def indice_espacial_topo(ui, camada_topo, camada_topo3D, campo_z, log):
+def indice_espacial_topo(ui, geometria_area, camada_topo, camada_topo3D, campo_z, log):
     if camada_topo:
         contadorBar = 0
         feats_total = camada_topo.featureCount()
@@ -605,6 +820,7 @@ def indice_espacial_topo(ui, camada_topo, camada_topo3D, campo_z, log):
 
         repetir = 0
         dist_p = 4.99
+        #geometria_areaPlus = geometria_area.buffer(50, 1)
         for feat in camada_topo.getFeatures():
             # ProgressBar
             contadorBar += 1
@@ -614,9 +830,14 @@ def indice_espacial_topo(ui, camada_topo, camada_topo3D, campo_z, log):
                 QCoreApplication.processEvents()
             
             geom = feat.geometry()
+            '''or not geom.intersects(geometria_areaPlus):'''
             if not geom:
-                continue 
+                continue
+                
             for point in geom.vertices():
+                ponto_geom = QgsGeometry.fromPoint(point)
+                '''if not ponto_geom.intersects(geometria_areaPlus):
+                    continue'''
                 repetir += 1
                 try:
                     x, y = point.x(), point.y()
@@ -624,9 +845,9 @@ def indice_espacial_topo(ui, camada_topo, camada_topo3D, campo_z, log):
                         z = point.z()
                     else:
                         if campo_z:
-                            z = float(feat[campo_z])
+                            z = float(feat[campo_z]) #Se a camada for 2D e tiver campo Z na tab. de atributos
                         else:
-                            z = obter_z_do_furo_mais_proximo(x, y, ui.resultados_processadosFsim, log)
+                            z = obter_z_do_furo_mais_proximo(x, y, ui.resultados_processadosFsim, log) # Puxa o z da boca do furo de simulação. Só p/ testes
                         if np.isnan(z):
                             continue
                     
@@ -690,7 +911,6 @@ def indice_espacial_topo(ui, camada_topo, camada_topo3D, campo_z, log):
         return layer_vertices, indice_topo, dicionario_vertices
 
 
-
 #------------------------------------------------------------------------------------------------------------
 #----------Função Principal----------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------------------
@@ -699,11 +919,8 @@ def executar_simulacao(ui, iface):
         ui.progressBar_forPonto.setVisible(True)
         ui.progressBar_forPonto.setValue(0)
         
-        #Executa o processamento do plano de simulação
+        #Executa o processamento do plano de fogo de simulação
         processar_furoSim(ui)
-        
-            
-        
         
         if not hasattr(ui, "resultados_processados") or not ui.resultados_processados:
             log("Nenhum dado processado encontrado. Execute a etapa de processamento antes.")
@@ -748,14 +965,15 @@ def executar_simulacao(ui, iface):
             log("Não foi possível obter a geometria da área de simulação. Certifique-se de haver um único polígono na camada.")
             return
         geometria_area = feat_area.geometry()
-
-
+        
+        
         # Criar índice espacial-------------------------------------------------------------
-        layer_vertices, indice_topo, dicionario_vertices = indice_espacial_topo(ui, camada_topo, camada_topo3D, campo_z, log)
+        layer_vertices, indice_topo, dicionario_vertices = indice_espacial_topo(ui, geometria_area, camada_topo, camada_topo3D, campo_z, log)
         #-----------------------------------------------------------------------------------
 
         # Gera a malha de simulação
-        malha = gerar_malha(geometria_area)
+        resolucao = 20 #Resolução da malha de simulação Ex.: 20x20 metros
+        malha = gerar_malha(geometria_area, resolucao)
         quantidade_pontos = len(malha)
         log(f"✅ Gerado malha quadrada para simulação, quantidade de pontos: {quantidade_pontos}")
         
@@ -795,7 +1013,7 @@ def executar_simulacao(ui, iface):
             zi = None   # Variável que armazenará o Z a ser buscado
             
             # Área de busca ao redor do ponto simulado
-            tolerancia = 10 # Tolerancia p/ caixa de busca.
+            tolerancia = 100 # Tolerancia p/ caixa de busca.
             toleMax = 500
             ids = []
             resultado = None
@@ -813,7 +1031,7 @@ def executar_simulacao(ui, iface):
                         #log(f"Pontos encontrados! Norte: {pontos_N}, Sudeste: {pontos_SL}, Sudoeste: {pontos_SO}")
                         break
                         
-                tolerancia += 10    
+                tolerancia += 200   
                 
                 if tolerancia > toleMax:
                     #if contErro[0] <= vezesLog:
@@ -830,7 +1048,6 @@ def executar_simulacao(ui, iface):
             z = None  # Inicializa Z             
  
             # Triangulação: pegar os 3 mais próximos
-            #xi_f, yi_f = float(xi), float(yi)
             def dist_sq(p):
                 return (p[0] - xi) ** 2 + (p[1] - yi) ** 2
             p1 = min(pontos_N, key=dist_sq)
@@ -877,13 +1094,22 @@ def executar_simulacao(ui, iface):
                 menor_dist_raiz = math.sqrt(menor_dist) # Valor de distancia
                 #if carga_substituta > 0:
                     #carga = carga_substituta
-
-                if menor_dist_raiz == 0:
-                    menor_dist_raiz = 0.1  # evita divisão por zero
                 
+                #Teste de resultado
+                if menor_dist_raiz is None or not isinstance(menor_dist_raiz, (int, float)) or math.isnan(menor_dist_raiz):
+                    continue
+                # evita D = 0 e evita valores de vibração tendendo ao infinito
+                if menor_dist_raiz < 0.01:
+                    menor_dist_raiz = 0.01
+                #Calculo de velocidade
                 ppv = a * (carga ** b) * (menor_dist_raiz ** c)
+                #Teste do resultado
+                if ppv is None or not isinstance(ppv, (int, float)) or math.isnan(ppv):
+                    continue
+                #Atribuição
                 pontos_ppv.append((xi, yi, zi))
                 valores_ppv.append(ppv)
+                
                 #Debug
                 #if contErro[0] <= vezesLog:
                     #log(f"Ponto simulado gerado: ({xi}, {yi}, {zi}), PPV = {ppv}")
@@ -907,42 +1133,43 @@ def executar_simulacao(ui, iface):
             log("⚠️ Falha ao fazer triangulação. Verificar camada de topografia.")
         
         
+        '''# Adiciona ao projeto para depuração-------------------------------
+        # cria camada temporária de pontos (memory layer)
+        crs = QgsProject.instance().crs().authid()  # usa o CRS do projeto
+        vl = QgsVectorLayer(f"Point?crs={crs}", "Pontos_PPV", "memory")
+
+        prov = vl.dataProvider()
+
+        # adiciona campo para armazenar valor de PPV
+        prov.addAttributes([QgsField("PPV", QVariant.Double)])
+        vl.updateFields()
+
+        # cria feições a partir de pontos_ppv + valores_ppv
+        feats = []
+        for (x, y, z), ppv in zip(pontos_ppv, valores_ppv):
+            feat = QgsFeature()
+            feat.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(x, y)))
+            feat.setAttributes([ppv])
+            feats.append(feat)
+
+        prov.addFeatures(feats)
+        vl.updateExtents()
+
+        # adiciona camada ao projeto
+        QgsProject.instance().addMapLayer(vl)
+        #FIM---------------------------------------------------------------'''
+
+
+        
         # Progress Bar até esse ponto
         ui.progressBar_forPonto.setVisible(True)
         ui.progressBar_forPonto.setValue(0)
         gerar_curvas_isovalores(
             pontos_ppv, valores_ppv,
-            camada_topo,
-            "raster_ppv.tif",
-            "curvas_ppv",
-            log,
-            ui
+            camada_topo, log,
+            ui, resolucao  
         )
         
-        '''# Interpolação
-        xs = sorted(set([p[0] for p in pontos_ppv]))
-        ys = sorted(set([p[1] for p in pontos_ppv]))
-        zs = sorted(set([p[2] for p in pontos_ppv]))
-        grid_z = interpolar_ppv(pontos_ppv, valores_ppv, xs, ys, zs, ui)
-        
-        #Debug
-        log(f"Dados grid: {grid_z.shape}, xs: {len(xs)}, ys: {len(ys)}, zs: {len(zs) if zs else 'N/A'}")
-        log(f"Coordenadas: xs={xs[:5]} ys={ys[:5]} zs={zs[:5] if zs else 'N/A'}")
-        
-        # Criação do shapefile interpolado
-        salvar_shapefile(grid_z, xs, ys, camada_zcriticas.crs().authid(), zs,  "simulacao_ppv.shp")
-
-        if vib_max > 0:
-            grid_filtrado = np.where(grid_z > vib_max, grid_z, np.nan)
-            salvar_shapefile(grid_filtrado, xs, ys, camada_zcriticas.crs().authid(), "simulacao_vib_max.shp")
-
-        if carga_substituta > 0:
-            salvar_shapefile(grid_z, xs, ys, camada_zcriticas.crs().authid(), "simulacao_carga_substituta.shp")
-        
-        # Progress Bar até esse ponto
-        #ui.progressBar.setValue(100)
-        
-        log("Simulação concluída com sucesso.")'''
 
     except Exception as e:     
         tb = traceback.format_exc()                              

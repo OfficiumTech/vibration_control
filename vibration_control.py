@@ -28,6 +28,7 @@ from qgis.core import *
 from qgis.core import QgsProject
 from qgis.PyQt.QtCore import QObject
 from .processamento import *
+from . import processamento
 from PyQt5.QtWidgets import QTableWidgetItem
 from PyQt5.QtGui import QDoubleValidator
 
@@ -42,7 +43,9 @@ from osgeo import *
 #from .import regressao
 from .simulado import *
 from .estado import resetar_estado_plugin
-from . import regressao_sci
+#from . import regressao_sci
+from . import regressao_sci_linear
+from .auto_reload import auto_reload
 
 
 
@@ -64,8 +67,10 @@ class VibrationControl():
             application at run time.
         :type iface: QgsInterface
         """
+        
         # Save reference to the QGIS interface
         self.iface = iface
+        
         # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
         # initialize locale
@@ -308,30 +313,11 @@ class VibrationControl():
                 self.carregaComboBox(nome_camada, "furos_sim")
 
     
-
-    '''def executar_regressao(self):
-        try:
-            # Garante que os resultados foram processados antes
-            if not hasattr(self.dlg, "resultados_processados"):
-                raise Exception("Resultados não encontrados. Execute o processamento primeiro.")
-
-            try:
-                #from . import regressao_sci
-                regressao_sci.calcular_regressao(self.dlg)
-            except:
-                from . import regressao_numpy
-                regressao_numpy.calcular_regressao(self.dlg)
-            
-
-        except Exception as e:
-            from PyQt5.QtWidgets import QMessageBox
-            QMessageBox.critical(None, "Erro", str(e))'''
-
-
-
-
-
-
+    def ok(self):
+        if not hasattr(self.dlg, "resultados_processados") or not self.dlg.resultados_processados:
+            self.dlg.tabWidget.setCurrentIndex(1)  # Aba PROCESS
+        else:
+            self.dlg.tabWidget.setCurrentIndex(2)  # Aba Simulação
 
        
     #//-------------------------------//
@@ -360,16 +346,18 @@ class VibrationControl():
         self.dlg.toolButton_criticas.clicked.connect(self.abrirVetor)
         self.dlg.toolButton_topo.clicked.connect(self.abrirVetor)
         self.dlg.toolButton_furos_simular.clicked.connect(self.abrirVetor)
+        self.dlg.pushButton_OK.clicked.connect(self.ok)
+        
         
         
         self.dlg.pushButton_process.clicked.connect(lambda: processar_dados(self.iface, self.dlg))       
         self.dlg.pushButton_txt.clicked.connect(lambda: exportar_tabela_para_txt(self.dlg.resultados_processados))
         self.dlg.pushButton_imagem.clicked.connect(lambda: gerar_grafico(self.dlg.resultados_processados))
-        #self.dlg.pushButton_leiAtenuacao.clicked.connect(self.executar_regressao)
-        self.dlg.pushButton_leiAtenuacao.clicked.connect(lambda: regressao_sci.calcular_regressao(self.dlg))
-        self.dlg.pushButton_interp_graf.clicked.connect(lambda: regressao_sci.gerar_grafico_ajuste_ui(self.dlg))
+        self.dlg.pushButton_leiAtenuacao.clicked.connect(lambda: regressao_sci_linear.calcular_regressao(self.dlg))
+        self.dlg.pushButton_interp_graf.clicked.connect(lambda: regressao_sci_linear.gerar_grafico_ajuste_ui(self.dlg))
         self.dlg.pushButton_simular.clicked.connect(lambda: executar_simulacao(self.dlg, self.iface))
         self.dlg.pushButton_intxt.clicked.connect(lambda: importar_resultados_excel(self.dlg))
+        
         
         
         # Para capturar o valor de PPV(mm/s) entre linhas

@@ -3,10 +3,10 @@ import math
 import matplotlib.pyplot as plt
 import csv
 from qgis.core import QgsProject, QgsVectorLayer, QgsFeature, QgsGeometry, QgsWkbTypes
-from PyQt5.QtWidgets import QMessageBox, QFileDialog, QTableWidgetItem, QDialog, QVBoxLayout, QLabel, QComboBox, QPushButton
+from PyQt5.QtWidgets import QFileDialog, QTableWidgetItem, QDialog, QVBoxLayout, QLabel, QComboBox, QPushButton
 import openpyxl
 from openpyxl import Workbook
-import traceback
+#import traceback QMessageBox,
 from .processamento_sim import *
 
 
@@ -16,40 +16,18 @@ def processar_dados(iface, ui):
         # Obter os nomes das camadas selecionadas nos comboBoxes
         nome_furos = ui.comboBox_shpFuros.currentText()
         nome_geofones = ui.comboBox_shpGeofones.currentText()
-        #nome_furos_simular = ui.comboBox_shpFuros_simular.currentText() #-0-
 
         # Obter as camadas reais do projeto pelo nome
         camada_furos = obter_camada_por_nome(nome_furos)
         camada_geofones = obter_camada_por_nome(nome_geofones)
-        #camada_furos_simular = obter_camada_por_nome(nome_furos_simular)
- 
-            
 
         if not camada_furos or not camada_geofones:
             raise Exception("Camadas de furos e geofones não encontradas. Verifique se foram selecionadas corretamente.")
-        
-        #simular = False
-        #if camada_furos_simular:#-0-
-            #simular = True
-            
 
         # Verificar se as camadas são 3D e armazenar mensagens de aviso caso não sejam
         avisos_3d = []
         z_field_furos = verificar_3d_ou_campo_z(camada_furos, nome_furos, avisos_3d)
         z_field_geofones = verificar_3d_ou_campo_z(camada_geofones, nome_geofones, avisos_3d)
-        
-        #if simular:#-0-
-            #z_field_furos_simular = verificar_3d_ou_campo_z(camada_furos_simular, nome_furos_simular, avisos_3d)
-            #campos_furos_simular = [campo.name() for campo in camada_furos_simular.fields()]
-            
-            #campo_seq_simular = encontrar_nome_campo(campos_furos_simular, ["Seq. D.", "Ret. (ms)", "seq. d.", "ret. (ms)", "Sequencia", "Sequência"])
-            #campo_carga_simular = encontrar_nome_campo(campos_furos_simular, ["Carga (KG)", "Cargas (KG)", "carga (kg)", "cargas (kg)", "Carga(KG)", "Cargas(KG)", "carga(kg)", "cargas(kg)" ])
-            #campo_id_furo_simular = encontrar_nome_campo(campos_furos_simular, ["Id", "id", "ID", "Identificação", "Ident"])
-            
-            #if not all([campo_seq_simular, campo_carga_simular, campo_id_furo_simular]):
-                #raise Exception("Campos obrigatórios ausentes na tabela de atributos dos furos de simulação. Leia a aba 'HELP'.")
-                
-        
 
         if avisos_3d:
             QMessageBox.warning(None, "Aviso - Dados 2D", "\n".join(avisos_3d))
@@ -63,65 +41,80 @@ def processar_dados(iface, ui):
         campo_id_furo = encontrar_nome_campo(campos_furos, ["Id", "id", "ID", "Identificação", "Ident", "Ponto", "PONTO"])
         campo_id_geofone = encontrar_nome_campo(campos_geofones, ["Id", "id", "ID", "Identificação", "Ident", "Ponto", "PONTO"])
         campo_ppv = encontrar_nome_campo(campos_geofones, ["PVS(mm/s)", "PPV(mm/s)", "PVS (mm/s)", "PPV (mm/s)", "PVS", "PPV"])
-        
-        
-        
-        
+        desmonte_furo = encontrar_nome_campo(campos_furos, ["Desmonte", "desmonte", "Evento", "evento", "Plano de Fogo", "plano de fogo"])
+        desmonte_geofone = encontrar_nome_campo(campos_geofones, ["Desmonte", "desmonte", "Evento", "evento", "Plano de Fogo", "plano de fogo"])
+
         if not all([campo_seq, campo_carga, campo_id_furo, campo_id_geofone, campo_ppv]):
-            raise Exception("Campos obrigatórios ausentes na tabela de atributos. Leia a aba 'HELP'.")
+            log("Campos obrigatórios ausentes na tabela de atributos. Leia a aba 'HELP'.", interromper=True)
+
+        if desmonte_furo and not desmonte_geofone:
+            log("Falta campo de identificação do desmonte na camada de geofones", interromper=True)
+        if desmonte_geofone and not desmonte_furo:
+            log("Falta campo de identificação do desmonte na camada de furos", interromper=True)
+
+        evento_unico = False
+        if not desmonte_geofone and not desmonte_furo:
+            evento_unico = True
 
         # Mudar para a aba PROCESS
         ui.tabWidget.setCurrentIndex(1)
 
-        # Agrupar furos por sequência de detonação------------------------------------------------------
+        # Agrupar furos por sequência de detonação em cada desmonte
         grupos_furos = {}
         for f in camada_furos.getFeatures():
             seq = f[campo_seq]
             carga = f[campo_carga]
-            if seq not in grupos_furos:
-                grupos_furos[seq] = []
-            grupos_furos[seq].append((f, carga))
+
+            if not evento_unico:
+                desmonte = f[desmonte_furo]
+                chave = (desmonte, seq)
+            else:
+                chave = seq
+
+            if chave not in grupos_furos:
+                grupos_furos[chave] = []
+            grupos_furos[chave].append((f, carga))
 
         # Calcular carga total por grupo
-        cargas_por_seq = {seq: sum([c for _, c in furos]) for seq, furos in grupos_furos.items()}
+        cargas_por_seq = {chave: sum([c for _, c in furos]) for chave, furos in grupos_furos.items()}
 
-        # Identificar a(s) sequência(s) com maior carga
-        maior_carga_total = max(cargas_por_seq.values())
-        seqs_maior_carga = [seq for seq, carga in cargas_por_seq.items() if carga == maior_carga_total]
-        #-----------------------------------------------------------------------------------------------
-        
+        # Para cada desmonte, encontrar a(s) sequência(s) com maior carga
+        sequencias_por_desmonte = {}
+        for chave, carga in cargas_por_seq.items():
+            if evento_unico:
+                desmonte = None
+                seq = chave
+            else:
+                desmonte, seq = chave
+
+            if desmonte not in sequencias_por_desmonte:
+                sequencias_por_desmonte[desmonte] = {"maior_carga": carga, "sequencias": [seq]}
+            else:
+                if carga > sequencias_por_desmonte[desmonte]["maior_carga"]:
+                    sequencias_por_desmonte[desmonte] = {"maior_carga": carga, "sequencias": [seq]}
+                elif carga == sequencias_por_desmonte[desmonte]["maior_carga"]:
+                    sequencias_por_desmonte[desmonte]["sequencias"].append(seq)
+
+        # Processar geofones
         resultados = []
-        #resultadosFsim = []
+        ui.resultados_processados = [] # Limpar resultados existentes
         for g in camada_geofones.getFeatures():
             geom_g = g.geometry()
             if geom_g.isEmpty() or QgsWkbTypes.geometryType(geom_g.wkbType()) != QgsWkbTypes.PointGeometry:
                 continue
 
-            # Obtemos o ponto da geometria do geofone, com suporte a coordenada Z se houver
-            #pt_g = geom_g.asPoint()
             pt_g = geom_g.constGet()
             xg, yg = pt_g.x(), pt_g.y()
-            
-            # Obter coordenada Z do geofone
-            # Se a geometria for 2D:
-            # Usa o campo de cota Z, se existir; senão, assume Z = 0 como valor padrão
-            #zg = pt_g.z() if QgsWkbTypes.hasZ(geom_g.wkbType()) else g[z_field_geofones] if z_field_geofones else 0
+
             if QgsWkbTypes.hasZ(geom_g.wkbType()):
-                # Se for 3D, usamos a coordenada Z diretamente da geometria
-                #pt_g = geom_g.asPoint()
                 zg = pt_g.z()
             else:
-                # Se for 2D, tentamos buscar o valor de cota Z no campo da tabela de atributos
-                if z_field_geofones:
-                    zg = float(g[z_field_geofones])
-                    #pt_g = geom_g.asPoint()
-                    #zg = g[z_field_geofones] 
-                else:
-                    # Se nem a geometria nem a tabela possuem Z, usamos 0 como valor padrão
-                    zg = 0
+                zg = float(g[z_field_geofones]) if z_field_geofones else 0
 
-            
-            # Captura dos furos mais próximos-----------------------------------------------------------------------
+            desmonte_atual = g[desmonte_geofone] if desmonte_geofone else None
+            sequencias_validas = sequencias_por_desmonte.get(desmonte_atual, {}).get("sequencias", [])
+
+            # Captura dos furos mais próximos
             menor_dist = float("inf")
             furo_mais_proximo = None
             seq_furo = None
@@ -130,121 +123,95 @@ def processar_dados(iface, ui):
             yf_mais_proximo = None
             zf_mais_proximo = None
 
-            for seq in seqs_maior_carga:
-                for f, carga in grupos_furos[seq]:
+            for chave, furos in grupos_furos.items():
+                if evento_unico:
+                    considerar = chave in sequencias_validas
+                elif isinstance(chave, tuple):
+                    desmonte_chave, seq_chave = chave
+                    considerar = (desmonte_chave == desmonte_atual and seq_chave in sequencias_validas)
+                else:
+                    considerar = False
+
+                if not considerar:
+                    continue
+
+                carga_total = cargas_por_seq[chave]
+
+                for f, _ in furos:
                     geom_f = f.geometry()
                     if geom_f.isEmpty() or QgsWkbTypes.geometryType(geom_f.wkbType()) != QgsWkbTypes.PointGeometry:
                         continue
 
-                    #pt_f = geom_f.asPoint()
                     pt_f = geom_f.constGet()
                     xf, yf = pt_f.x(), pt_f.y()
-                    # Obter coordenada Z do furo
-                    #zf = pt_f.z() if QgsWkbTypes.hasZ(geom_f.wkbType()) else f[z_field_furos] if z_field_furos else 0
                     if QgsWkbTypes.hasZ(geom_f.wkbType()):
-                        #pt_f = geom_f.asPoint()
                         zf = pt_f.z()
                     else:
-                        #pt_f = geom_f.asPoint()
                         zf = float(f[z_field_furos]) if z_field_furos else 0
 
-                    # Calcular distância tridimensional
                     dist = math.sqrt((xg - xf)**2 + (yg - yf)**2 + (zg - zf)**2)
 
                     if dist < menor_dist:
                         menor_dist = dist
                         furo_mais_proximo = f
-                        seq_furo = seq
-                        carga_furo = cargas_por_seq[seq]
+                        seq_furo = chave[1] if isinstance(chave, tuple) else chave
+                        carga_furo = carga_total
                         xf_mais_proximo = xf
                         yf_mais_proximo = yf
                         zf_mais_proximo = zf
-            #-----------------------------------------------------------------------------------------------------
-            #Armazenar resultados---------------------------------------------------------------------------------
+
+            # Armazenar resultados
             if furo_mais_proximo:
                 resultados.append({
-                    "ID Geofone": g[campo_id_geofone], #Fonte primária: tabela de atributos do arquivo contido no comboBox: "comboBox_shpGeofones".
-                    "ID Furo": furo_mais_proximo[campo_id_furo], #Fonte primária: tabela de atributos do arquivo contido no comboBox: "comboBox_shpFuros".
-                    "Seq. D.": seq_furo, #Fonte primária: tabela de atributos do arquivo contido no comboBox: "comboBox_shpFuros".
-                    "Carga (KG)": carga_furo, #Carga do conjunto de furos mais proximos
-                    "Distância (m)": round(menor_dist, 2), #Calculada no "processamento.py"
-                    "PPV/PVS": g[campo_ppv], #Fonte primária: tabela de atributos do arquivo contido no comboBox: "comboBox_shpGeofones".
-                    "x do furo": xf_mais_proximo,  #Armazenam as coordenadas (x, y, z) dos furos de maior carga.
+                    "ID Geofone": g[campo_id_geofone],
+                    "ID Furo": furo_mais_proximo[campo_id_furo],
+                    "Seq. D.": seq_furo,
+                    "Carga (KG)": carga_furo,
+                    "Distância (m)": round(menor_dist, 2),
+                    "PPV/PVS": g[campo_ppv],
+                    "x do furo": xf_mais_proximo,
                     "y do furo": yf_mais_proximo,
-                    "z do furo": zf_mais_proximo
+                    "z do furo": zf_mais_proximo,
+                    "Desmonte": desmonte_atual
                 })
-            
-            
-        
+
+    
+
         processar_furoSim(ui)
-            
-        '''#-0-Furos de simulação-----------------------------------------------------------------------------------
-        # Se a camada de simulação estiver presente, também processa
-        if simular:
-            # Agrupar furos_simular por sequência de detonação
-            grupos_simular = {}
-            for f in camada_furos_simular.getFeatures():
-                seq = f[campo_seq_simular]
-                carga = f[campo_carga_simular]
-                if seq not in grupos_simular:
-                    grupos_simular[seq] = []
-                grupos_simular[seq].append((f, carga))
-
-            # Calcular carga total por grupo
-            cargas_por_seq_simular = {seq: sum([c for _, c in furos]) for seq, furos in grupos_simular.items()}
-
-            # Identificar a(s) sequência(s) com maior carga
-            maior_carga_total_simular = max(cargas_por_seq_simular.values())
-            seqs_maior_carga_simular = [seq for seq, carga in cargas_por_seq_simular.items() if carga == maior_carga_total_simular]
-        
-        
-            # Para cada sequência com maior carga, pega os furos com maior carga individual
-            for seq in seqs_maior_carga_simular:
-                furos_seq = grupos_simular[seq]
-                
-                for f, carga in furos_seq:
-                    geom_f = f.geometry()
-                    if geom_f.isEmpty() or QgsWkbTypes.geometryType(geom_f.wkbType()) != QgsWkbTypes.PointGeometry:
-                        continue
-                    pt_f = geom_f.constGet()
-                    xf, yf = pt_f.x(), pt_f.y()
-                    if QgsWkbTypes.hasZ(geom_f.wkbType()):
-                        zf = pt_f.z()
-                    else:
-                        zf = f[z_field_furos_simular] if z_field_furos_simular else 0
-                    resultadosFsim.append({
-                        "ID Furo sim": f[campo_id_furo_simular],
-                        "Total Carga / Seq.": maior_carga_total_simular,
-                        # Remover a coluna "Seq. D. sim" se não for mais necessária:
-                        # "Seq. D. sim": seq,
-                        "Carga (KG) sim": carga,
-                        "x do furo sim": xf,
-                        "y do furo sim": yf,
-                        "z do furo sim": zf
-                    })
-        # Camada de simulação - calculada e armazenada-------------------------------------------'''
-            
             
 
         # Preencher a tabela da aba PROCESS com os resultados----------------------------------------
         ui.tabelaResultados.setRowCount(len(resultados))
-        ui.tabelaResultados.setColumnCount(6)
-        ui.tabelaResultados.setHorizontalHeaderLabels(["ID Geofone", "ID Furo", "Seq. D.", "Carga (KG)", "Distância (m)", "PPV/PVS"])
+        ui.tabelaResultados.setColumnCount(7)
+        ui.tabelaResultados.setHorizontalHeaderLabels(["ID Geofone", "ID Furo", "Seq. D.", "Desmonte", "Carga (KG)", "Distância (m)", "PPV/PVS"])
 
         for i, res in enumerate(resultados):
-            for j, chave in enumerate(["ID Geofone", "ID Furo", "Seq. D.", "Carga (KG)", "Distância (m)", "PPV/PVS"]):
+            for j, chave in enumerate(["ID Geofone", "ID Furo", "Seq. D.", "Desmonte", "Carga (KG)", "Distância (m)", "PPV/PVS"]):
                 item = QTableWidgetItem(str(res[chave]))
                 ui.tabelaResultados.setItem(i, j, item)
+        
+        #ui.tabelaResultados.resizeColumnsToContents() # Ajustar automaticamente a largura das colunas
+        # Definindo larguras fixas para cada coluna (em pixels)
+        ui.tabelaResultados.setColumnWidth(0, 90)  # "ID Geofone"
+        ui.tabelaResultados.setColumnWidth(1, 90)  # "ID Furo"
+        ui.tabelaResultados.setColumnWidth(2, 70)   # "Seq. D."
+        ui.tabelaResultados.setColumnWidth(3, 90)  # "Desmonte"
+        ui.tabelaResultados.setColumnWidth(4, 100)   # "Carga (KG)"
+        ui.tabelaResultados.setColumnWidth(5, 100)  # "Distância (m)"
+        ui.tabelaResultados.setColumnWidth(6, 90)   # "PPV/PVS"
+
         #---------------------------------------------------------------------------------------------
         
         # Armazenar resultados para exportações posteriores
         ui.resultados_processados = resultados
         #ui.resultados_processadosFsim = resultadosFsim
         
+        
     except Exception as e:
         tb = traceback.format_exc()
         log(f"⚠️ Erro no Processamento: {e} \nTraceback:\n{tb}")        
         #QMessageBox.critical(None, "Processamento do Vibration Control - ERRO!", str(e) "\nTraceback:\n"{tb})
+
 
 
 # Função que retorna a camada do projeto com o nome informado
@@ -256,7 +223,6 @@ def obter_camada_por_nome(nome):
 
 
 # Encontra o nome real de um campo da camada a partir de possíveis nomes
-
 def encontrar_nome_campo(campos, possiveis_nomes):
     for nome in possiveis_nomes:
         if nome in campos:
@@ -265,7 +231,6 @@ def encontrar_nome_campo(campos, possiveis_nomes):
 
 
 # Verifica se a camada é 3D ou tenta encontrar campo Z na tabela de atributos
-
 def verificar_3d_ou_campo_z(camada, nome_camada, avisos):
     if QgsWkbTypes.hasZ(camada.wkbType()):
         return None  # Geometria já é 3D, não precisa de campo Z
@@ -289,7 +254,6 @@ def verificar_3d_ou_campo_z(camada, nome_camada, avisos):
 
 
 # Cria um popup para o usuário escolher um campo Z ou seguir sem cota
-
 def dialogo_escolher_campo_z(camada, nome_camada):
     dialog = QDialog()
     dialog.setWindowTitle(f"Selecionar campo Z - {nome_camada}")
@@ -319,7 +283,6 @@ def dialogo_escolher_campo_z(camada, nome_camada):
 
 
 # Exporta os resultados para txt, csv ou excel
-
 def exportar_tabela_para_txt(resultados):
     caminho, filtro = QFileDialog.getSaveFileName(
         None,
@@ -368,12 +331,26 @@ def exportar_tabela_para_txt(resultados):
 
 
 #Logs
+import traceback
+from PyQt5.QtWidgets import QMessageBox
 
-def log(mensagem):
-    QMessageBox.information(None, "Procesamento - Blaster Vibration Control", mensagem)
+def log(mensagem=None, excecao=None, interromper=False):
+    if excecao:
+        mensagem_erro = f"{mensagem or 'Erro durante o processamento:'}\n\n{str(excecao)}\n\n{traceback.format_exc()}"
+    else:
+        mensagem_erro = mensagem or "Erro desconhecido."
+
+    QMessageBox.information(None, "Processamento - Blaster Vibration Control", mensagem_erro)
+
+    if interromper:
+        raise Exception("Processo interrompido!")
+
+        
+#def log(mensagem):
+    #QMessageBox.information(None, "Procesamento - Blaster Vibration Control", mensagem)
+    
     
 # Gera gráficos baseados nos resultados (PPV vs Distância e Carga vs Distância)
-
 def gerar_grafico(resultados):
     try:
         distancias = [r['Distância (m)'] for r in resultados]
