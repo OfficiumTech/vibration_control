@@ -45,7 +45,7 @@ from .simulado import *
 from .estado import resetar_estado_plugin
 #from . import regressao_sci
 from . import regressao_sci_linear
-from .auto_reload import auto_reload
+
 
 
 
