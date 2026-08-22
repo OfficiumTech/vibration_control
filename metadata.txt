@@ -2,12 +2,12 @@
 name=Blaster Vibration Control
 qgisMinimumVersion=3.0
 qgisMaximumVersion=3.99
-description=Blaster Vibration Control - Simulação e análise de vibrações em desmontes com explosivos.
-version=1.1
+description=Regression and simulation of vibrations in blasting operations.
+version=1.2
 author=Bruno S. Mosso
 email=engbrunomosso@outlook.com
-about=English: GIS plugin for QGIS to simulate blast-induced vibrations, assist in rock blasting safety, plot PPV (Peak Particle Velocity) isolines, and calculate maximum explosive charge per hole or delay for critical distances. Before using, you need to install the pykrige library using the OSGeo4W Shell. Run: pip install pykrige and pip install --upgrade openpyxl. Note: To ensure proper functioning, use a Cartesian coordinate system such as UTM (Universal Transverse Mercator).
- Portuguese: Ferramenta GIS para o QGIS, capaz de simular vibrações, auxiliar na segurança de desmontes de rocha, plotar isolinhas de PPV (Velocidade Pico de Partícula) e calcular a carga máxima de explosivo por furo ou retardo conforme distâncias de estruturas críticas. Antes de usar, é necessário instalar a biblioteca pykrige no prompt OSGeo4W Shell. Execute: pip install pykrige e pip install --upgrade openpyxl. Observação: Para garantir o funcionamento adequado, utilize um sistema de coordenadas cartesianas, como projeções UTM (Universal Transverse Mercator).
+about=English: GIS plugin for QGIS to simulate blast-induced vibrations, assist in rock blasting safety, plot PPV (Peak Particle Velocity) isolines, and calculate maximum explosive charge per hole or delay for critical distances. Before using, you need to install the pykrige and openpyxl library using the OSGeo4W Shell. Run: pip install pykrige and pip install --upgrade openpyxl. Note: 1) - To ensure proper functioning, use a Cartesian coordinate system such as UTM (Universal Transverse Mercator). 2) - Demonstration vídeo: "https://www.youtube.com/watch?v=ECgg6inDFh4" 3) - For more features, please contact by email or Linkedin: "www.linkedin.com/in/bruno-soares-mosso-535562325".
+ Portuguese: Ferramenta GIS para o QGIS, capaz de simular vibrações, auxiliar na segurança de desmontes de rocha, plotar isolinhas de PPV (Velocidade Pico de Partícula) e calcular a carga máxima de explosivo por furo ou retardo conforme distâncias de estruturas críticas. Antes de usar, é necessário instalar a biblioteca pykrige e openpyxl no prompt OSGeo4W Shell. Execute: pip install pykrige e pip install --upgrade openpyxl. Observação: 1) - Para garantir o funcionamento adequado, utilize um sistema de coordenadas cartesianas, como projeções UTM (Universal Transverse Mercator). 2) - Vídeo demonstrativo: "https://www.youtube.com/watch?v=ECgg6inDFh4" 3) - Para mais funcionalidades, entre em contato por e-mail ou Linkedin: "www.linkedin.com/in/bruno-soares-mosso-535562325".
 
 # URLs obrigatórios (precisam ser válidos ou acessíveis)
 tracker=https://github.com/OfficiumTech/vibration_control/issues
@@ -15,8 +15,8 @@ repository=https://github.com/OfficiumTech/vibration_control
 homepage=https://github.com/OfficiumTech/vibration_control
 
 # Itens recomendados
-hasProcessingProvider=no
-tags=blaster, vibration, control, mining, qgis
+hasProcessingProvider=False
+tags=blasting, vibration, mining, explosives, ppv
 category=Geoprocessing
 icon=icon.png
 experimental=False
