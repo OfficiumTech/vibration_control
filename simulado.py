@@ -9,7 +9,8 @@ from datetime import datetime
 from qgis import processing
 import tempfile
 from osgeo import gdal, osr
-
+import logging
+logger = logging.getLogger(__name__)
 
 from qgis.core import (
     QgsApplication,
@@ -669,8 +670,9 @@ def gerar_curvas_isovalores(pontos_ppv, valores_ppv, camada_base, log, uii, reso
                         # se for multibanda, você talvez queira aplicar simbologia na banda 1
                         conf_raster(raster_layer, None, "Raster PPV_R")
                 except Exception:
-                    # se conf_raster não existir ou falhar, apenas ignore
-                    pass
+                    # se conf_raster não existir ou falhar, registre e passe
+                    #pass
+                    logger.debug("Não foi possível configurar a simbologia do raster PPV_R: %s", e)
 
             uii.progressBar_forPonto.setValue(100)
             log(f"✅ Raster de PPV salvo em: {raster_path}")
@@ -882,6 +884,11 @@ def indice_espacial_topo(ui, geometria_area, camada_topo, camada_topo3D, campo_z
                     pontos_adicionados_index.addFeature(feat_nova)
 
                 except Exception as e:
+                    logger.debug(
+                        "Ponto ignorado durante o processamento (feature ID: %s): %s",
+                        feat.id(),
+                        e
+                    )
                     continue
 
         provider.addFeatures(feats_vertices)

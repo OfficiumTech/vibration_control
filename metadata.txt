@@ -3,7 +3,7 @@ name=Blaster Vibration Control
 qgisMinimumVersion=3.0
 qgisMaximumVersion=3.99
 description=Regression and simulation of vibrations in blasting operations.
-version=1.2
+version=1.4
 author=Bruno S. Mosso
 email=engbrunomosso@outlook.com
 about=English: GIS plugin for QGIS to simulate blast-induced vibrations, assist in rock blasting safety, plot PPV (Peak Particle Velocity) isolines, and calculate maximum explosive charge per hole or delay for critical distances. Before using, you need to install the pykrige and openpyxl library using the OSGeo4W Shell. Run: pip install pykrige and pip install --upgrade openpyxl. Note: 1) - To ensure proper functioning, use a Cartesian coordinate system such as UTM (Universal Transverse Mercator). 2) - Demonstration vídeo: "https://www.youtube.com/watch?v=ECgg6inDFh4" 3) - For more features, please contact by email or Linkedin: "www.linkedin.com/in/bruno-soares-mosso-535562325".
