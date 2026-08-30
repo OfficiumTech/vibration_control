@@ -206,6 +206,7 @@ def gerar_malha(area_poligono, resolucao=20):
         x += resolucao
     return pontos
 
+#estou usando essa função? Aqui não, verificar se eu a chamo em outro arquivo!
 def interpolar_ppv(pontos, valores, grid_x, grid_y, grid_z, uii):
     if krige_disponivel and grid_z is not None:
         try:
@@ -542,20 +543,25 @@ def gerar_curvas_isovalores(pontos_ppv, valores_ppv, camada_base, log, uii, reso
 
                 log("✅ Interpolação por Krigagem concluída.")
                 #-----------------------------------------------------------------------------------
-                
-            else:
+            
+            #Se krige_disponivel==false eu forço um erro p/ executar IDW            
+            else: 
                 raise ImportError("Biblioteca PyKrige não disponível")
 
         
         #=== Interpolação por IDW  ===========================================================#
         #=====================================================================================#
-        
+        # Fallback: Interpolação IDW 3D manual
         except Exception as e:
             tb = traceback.format_exc()
-            # Fallback: Interpolação IDW 3D manual
-            log(f"⚠️ Interpolando por IDW 3D como fallback. \nERRO: \n{e} \nTraceback:\n{tb}")
+            logger.debug(
+                "⚠️ Interpolando por IDW 3D como fallback: %s\nTraceback:\n%s",
+                e,
+                tb
+            )
+            log(f"⚠️ Interpolando por IDW 3D como fallback.")
+           
             grid_result = np.zeros_like(grid_x, dtype=float)
-
             # Empilha coordenadas em um único array (Nx3)
             coords_interp = np.column_stack((x, y, z))
             num_pontos = coords_interp.shape[0]
