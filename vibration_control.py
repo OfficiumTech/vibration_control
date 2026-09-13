@@ -29,8 +29,10 @@ from qgis.core import QgsProject
 from qgis.PyQt.QtCore import QObject
 from .processamento import *
 from . import processamento
-from PyQt5.QtWidgets import QTableWidgetItem
-from PyQt5.QtGui import QDoubleValidator
+#from PyQt5.QtWidgets import QTableWidgetItem #atualização QGIS4.0
+from qgis.PyQt.QtWidgets import QTableWidgetItem
+#from PyQt5.QtGui import QDoubleValidator #atualização QGIS4.0
+from qgis.PyQt.QtGui import QDoubleValidator
 
 # Initialize Qt resources from file resources.py
 from .resources import *
@@ -235,7 +237,7 @@ class VibrationControl():
         self.dlg.comboBox_shpTopo.addItem("Selecione...")
         self.dlg.comboBox_shpFuros_simular.addItem("Selecione...")
 
-        lista_layers = [layer.name() for layer in QgsProject.instance().mapLayers().values() if layer.type() == QgsMapLayer.VectorLayer]
+        lista_layers = [layer.name() for layer in QgsProject.instance().mapLayers().values() if layer.type() == QgsMapLayer.LayerType.VectorLayer]
         
         #add as camadas correntes nos comboBox
         self.dlg.comboBox_shpFuros.addItems(lista_layers)
@@ -362,14 +364,16 @@ class VibrationControl():
         
         # Para capturar o valor de PPV(mm/s) entre linhas
         validator = QDoubleValidator(0.0, 999.99, 2)  # min, max, casas decimais
-        validator.setNotation(QDoubleValidator.StandardNotation)
+        #validator.setNotation(QDoubleValidator.StandardNotation)
+        validator.setNotation(QDoubleValidator.Notation.StandardNotation)
         self.dlg.lineEdit_iso.setValidator(validator)
     
 
 
 
         # Run the dialog event loop
-        result = self.dlg.exec_()
+        #result = self.dlg.exec_()
+        result = self.dlg.exec()
         # See if OK was pressed
         if result:
             # Do something useful here - delete the line containing pass and

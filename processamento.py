@@ -3,7 +3,7 @@ import math
 import matplotlib.pyplot as plt
 import csv
 from qgis.core import QgsProject, QgsVectorLayer, QgsFeature, QgsGeometry, QgsWkbTypes
-from PyQt5.QtWidgets import QFileDialog, QTableWidgetItem, QDialog, QVBoxLayout, QLabel, QComboBox, QPushButton
+from qgis.PyQt.QtWidgets import QFileDialog, QTableWidgetItem, QDialog, QVBoxLayout, QLabel, QComboBox, QPushButton
 import openpyxl
 from openpyxl import Workbook
 #import traceback QMessageBox,
@@ -274,11 +274,26 @@ def dialogo_escolher_campo_z(camada, nome_camada):
 
     dialog.setLayout(layout)
 
-    if dialog.exec_() == QDialog.Accepted:
+    """if dialog.exec_() == QDialog.Accepted:
         escolhido = combo.currentText()
         if escolhido == "Sem cota z":
             return None
         return escolhido
+    return None"""
+    
+    if hasattr(dialog, "exec"):
+        resultado_dialogo = dialog.exec()
+    else:
+        resultado_dialogo = dialog.exec_()
+
+    dialog_code = getattr(QDialog, "DialogCode", QDialog)
+
+    if resultado_dialogo == dialog_code.Accepted:
+        escolhido = combo.currentText()
+        if escolhido == "Sem cota z":
+            return None
+        return escolhido
+
     return None
 
 
@@ -332,7 +347,7 @@ def exportar_tabela_para_txt(resultados):
 
 #Logs
 import traceback
-from PyQt5.QtWidgets import QMessageBox
+from qgis.PyQt.QtWidgets import QMessageBox
 
 def log(mensagem=None, excecao=None, interromper=False):
     if excecao:
