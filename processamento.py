@@ -2,7 +2,7 @@ import os
 import math
 import matplotlib.pyplot as plt
 import csv
-from qgis.core import QgsProject, QgsVectorLayer, QgsFeature, QgsGeometry, QgsWkbTypes
+from qgis.core import QgsProject, QgsVectorLayer, QgsFeature, QgsGeometry, QgsWkbTypes, Qgis
 from qgis.PyQt.QtWidgets import QFileDialog, QTableWidgetItem, QDialog, QVBoxLayout, QLabel, QComboBox, QPushButton
 import openpyxl
 from openpyxl import Workbook
@@ -100,7 +100,8 @@ def processar_dados(iface, ui):
         ui.resultados_processados = [] # Limpar resultados existentes
         for g in camada_geofones.getFeatures():
             geom_g = g.geometry()
-            if geom_g.isEmpty() or QgsWkbTypes.geometryType(geom_g.wkbType()) != QgsWkbTypes.PointGeometry:
+            #if geom_g.isEmpty() or QgsWkbTypes.geometryType(geom_g.wkbType()) != QgsWkbTypes.PointGeometry:
+            if geom_g.isEmpty() or QgsWkbTypes.geometryType(geom_g.wkbType()) != Qgis.GeometryType.Point:
                 continue
 
             pt_g = geom_g.constGet()
@@ -139,7 +140,7 @@ def processar_dados(iface, ui):
 
                 for f, _ in furos:
                     geom_f = f.geometry()
-                    if geom_f.isEmpty() or QgsWkbTypes.geometryType(geom_f.wkbType()) != QgsWkbTypes.PointGeometry:
+                    if geom_f.isEmpty() or QgsWkbTypes.geometryType(geom_f.wkbType()) != Qgis.GeometryType.Point:
                         continue
 
                     pt_f = geom_f.constGet()

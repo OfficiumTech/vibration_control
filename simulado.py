@@ -52,10 +52,16 @@ from qgis.core import (
     QgsFeatureRequest
 )
 
+
+
+
 from qgis.PyQt.QtWidgets import QApplication
-from PyQt5.QtGui import QColor
-from PyQt5.QtWidgets import QMessageBox, QInputDialog
-from PyQt5.QtCore import QVariant, QCoreApplication
+from qgis.PyQt.QtGui import QColor
+from qgis.PyQt.QtWidgets import QMessageBox, QInputDialog
+from qgis.PyQt.QtCore import QVariant, QCoreApplication
+#from PyQt5.QtGui import QColor
+#from PyQt5.QtWidgets import QMessageBox, QInputDialog
+#from PyQt5.QtCore import QVariant, QCoreApplication
 #from qgis.PyQt.QtCore import QVariant
 #from qgis.core import QgsProject
 #from PyQt5.QtCore import QCoreApplication  # Progress Bar
@@ -71,11 +77,16 @@ def verificar_pykrige():
         msg_box = QMessageBox()
         msg_box.setWindowTitle("PyKrige disponível")
         msg_box.setText("A biblioteca PyKrige está disponível nesta instalação.\n'OK' para usar krigagem ou 'Cancel' para usar IDW")
-        msg_box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
+        '''msg_box.setStandardButtons(QMessageBox.Ok | QMessageBox.Cancel)
         msg_box.setDefaultButton(QMessageBox.Ok)
         resposta = msg_box.exec_()
 
-        if resposta == QMessageBox.Ok:
+        if resposta == QMessageBox.Ok:'''
+        msg_box.setStandardButtons(QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.Cancel)
+        msg_box.setDefaultButton(QMessageBox.StandardButton.Ok)
+        resposta = msg_box.exec()
+
+        if resposta == QMessageBox.StandardButton.Ok:
             krige_disponivel = True
         else:
             krige_disponivel = False
@@ -359,7 +370,8 @@ def arredonda_campo(layer: QgsVectorLayer, nome_campo: str):
         log(f"⚠️ Campo '{nome_campo}' não encontrado para arredondamento. Arredondamento ignorado")
         return
 
-    if not provider.capabilities() & QgsVectorDataProvider.ChangeAttributeValues:
+    #if not provider.capabilities() & QgsVectorDataProvider.ChangeAttributeValues:
+    if not provider.capabilities() & QgsVectorDataProvider.Capability.ChangeAttributeValues:
         log("⚠️ Camada não permite edição de atributos. Arredondamento ignorado.")
         return
 
