@@ -3,7 +3,8 @@
 # variograma.py
 
 #=========MODIFICADO COM AUTO FIT========================================================================================
-from PyQt5 import QtWidgets, QtCore
+#from PyQt5 import QtWidgets, QtCore
+from qgis.PyQt import QtWidgets, QtCore
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import numpy as np
@@ -216,8 +217,15 @@ def ajustar_variograma(coords, valores):
         resultado["scale"] = sc
 
     widget.parametros_confirmados.connect(salvar_parametros)
+    
+    if hasattr(widget, "exec"):
+        resultado_dialogo = widget.exec()
+    else:
+        resultado_dialogo = widget.exec_()
 
-    if widget.exec_() == QtWidgets.QDialog.Accepted:
+    dialog_code = getattr(QtWidgets.QDialog, "DialogCode", QtWidgets.QDialog)
+
+    if resultado_dialogo == dialog_code.Accepted:
         return (resultado.get("nugget"),
                 resultado.get("sill"),
                 resultado.get("range"),
@@ -226,6 +234,17 @@ def ajustar_variograma(coords, valores):
                 resultado.get("scale"))
     else:
         return None, None, None, None, None, None
+    
+
+    """if widget.exec_() == QtWidgets.QDialog.Accepted:
+        return (resultado.get("nugget"),
+                resultado.get("sill"),
+                resultado.get("range"),
+                resultado.get("modelo"),
+                resultado.get("exponent"),
+                resultado.get("scale"))
+    else:
+        return None, None, None, None, None, None"""
 
 
 

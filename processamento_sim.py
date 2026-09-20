@@ -1,7 +1,8 @@
 import os
 import matplotlib.pyplot as plt
-from qgis.core import QgsProject, QgsVectorLayer, QgsFeature, QgsGeometry, QgsWkbTypes
-from PyQt5.QtWidgets import QMessageBox, QFileDialog, QDialog, QVBoxLayout, QLabel, QComboBox, QPushButton
+from qgis.core import QgsProject, QgsVectorLayer, QgsFeature, QgsGeometry, QgsWkbTypes, Qgis
+#from PyQt5.QtWidgets import QMessageBox, QFileDialog, QDialog, QVBoxLayout, QLabel, QComboBox, QPushButton
+from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QDialog, QVBoxLayout, QLabel, QComboBox, QPushButton
 import traceback
 
 
@@ -64,12 +65,27 @@ def dialogo_escolher_campo_z(camada, nome_camada):
 
     dialog.setLayout(layout)
 
-    if dialog.exec_() == QDialog.Accepted:
+    if hasattr(dialog, "exec"):
+        resultado_dialogo = dialog.exec()
+    else:
+        resultado_dialogo = dialog.exec_()
+
+    dialog_code = getattr(QDialog, "DialogCode", QDialog)
+
+    if resultado_dialogo == dialog_code.Accepted:
         escolhido = combo.currentText()
         if escolhido == "Sem cota z":
             return None
         return escolhido
+
     return None
+
+    """if dialog.exec_() == QDialog.Accepted:
+        escolhido = combo.currentText()
+        if escolhido == "Sem cota z":
+            return None
+        return escolhido
+    return None"""
 
 
 #Logs
@@ -134,7 +150,8 @@ def processar_furoSim(ui):
                 
                 for f, carga in furos_seq:
                     geom_f = f.geometry()
-                    if geom_f.isEmpty() or QgsWkbTypes.geometryType(geom_f.wkbType()) != QgsWkbTypes.PointGeometry:
+                    #QgsWkbTypes.geometryType(geom_f.wkbType()) != QgsWkbTypes.PointGeometry
+                    if geom_f.isEmpty() or QgsWkbTypes.geometryType(geom_f.wkbType()) != Qgis.GeometryType.Point:
                         continue
                     pt_f = geom_f.constGet()
                     xf, yf = pt_f.x(), pt_f.y()

@@ -390,7 +390,8 @@ def arredonda_campo(layer: QgsVectorLayer, nome_campo: str):
     if layer and layer.isValid():
         labeling = QgsPalLayerSettings()
         labeling.fieldName = nome_campo
-        labeling.placement = QgsPalLayerSettings.Curved
+        #labeling.placement = QgsPalLayerSettings.Curved
+        labeling.placement = QgsPalLayerSettings.Placement.Curved
         labeling.enabled = True
 
         label_settings = QgsVectorLayerSimpleLabeling(labeling)
@@ -426,7 +427,8 @@ def conf_raster(layer, valores_ppv, Output_Layer_Name):
 
     # Criar renderer===================================================== Novo
     color_shader = QgsColorRampShader() # Define um shader com valores únicos (discretos)
-    color_shader.setColorRampType(QgsColorRampShader.Discrete)  # ou Interpolated, se preferir
+    #color_shader.setColorRampType(QgsColorRampShader.Discrete)  # ou Interpolated
+    color_shader.setColorRampType(QgsColorRampShader.Type.Discrete)
 
     # Gera uma rampa 'Spectral' automaticamente com os valores únicos
     entries = []

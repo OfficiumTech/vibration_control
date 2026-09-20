@@ -1,7 +1,8 @@
-#Versão2 - Interpola apena uma variável ===============================================================================
+#Versão2 - Interpola apenas uma variável ===============================================================================
 import numpy as np
 from pykrige.ok import OrdinaryKriging
-from PyQt5.QtCore import QCoreApplication
+#from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.QtCore import QCoreApplication
 from scipy.spatial import cKDTree
 
 def krigagemF(nugget, sill, range_, modelo, exponent, scale, x, y, z, v, grid_x, grid_y, uii, tolerancia=100, log=print):

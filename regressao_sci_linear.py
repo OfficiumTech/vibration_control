@@ -1,4 +1,5 @@
-from PyQt5.QtWidgets import QMessageBox
+#from PyQt5.QtWidgets import QMessageBox
+from qgis.PyQt.QtWidgets import QMessageBox
 from scipy.optimize import curve_fit
 import numpy as np
 import traceback
