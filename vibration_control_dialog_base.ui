@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>707</width>
-    <height>459</height>
+    <width>946</width>
+    <height>606</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,10 +17,21 @@
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>10</y>
-     <width>711</width>
-     <height>451</height>
+     <y>20</y>
+     <width>941</width>
+     <height>581</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="mouseTracking">
+    <bool>true</bool>
+   </property>
+   <property name="tabletTracking">
+    <bool>false</bool>
    </property>
    <property name="currentIndex">
     <number>0</number>
@@ -35,31 +46,26 @@
     <widget class="QLabel" name="label_furos">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>40</y>
-       <width>261</width>
-       <height>16</height>
+       <x>30</x>
+       <y>56</y>
+       <width>381</width>
+       <height>21</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
      </property>
      <property name="text">
       <string>Posição dos Furos de Desmonte (pontos)</string>
      </property>
     </widget>
-    <widget class="QComboBox" name="comboBox_shpZCriticas">
-     <property name="geometry">
-      <rect>
-       <x>360</x>
-       <y>60</y>
-       <width>231</width>
-       <height>22</height>
-      </rect>
-     </property>
-    </widget>
     <widget class="QComboBox" name="comboBox_shpGeofones">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>120</y>
+       <x>30</x>
+       <y>160</y>
        <width>231</width>
        <height>22</height>
       </rect>
@@ -68,11 +74,16 @@
     <widget class="QLabel" name="label_geofones">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>100</y>
-       <width>251</width>
-       <height>21</height>
+       <x>30</x>
+       <y>120</y>
+       <width>271</width>
+       <height>31</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
      </property>
      <property name="text">
       <string>Posição Geofones (pontos)</string>
@@ -81,32 +92,19 @@
     <widget class="QComboBox" name="comboBox_shpFuros">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>60</y>
+       <x>30</x>
+       <y>90</y>
        <width>231</width>
-       <height>22</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label_zCriticas">
-     <property name="geometry">
-      <rect>
-       <x>360</x>
-       <y>40</y>
-       <width>251</width>
        <height>21</height>
       </rect>
-     </property>
-     <property name="text">
-      <string>Área de simulação (polígono)</string>
      </property>
     </widget>
     <widget class="QToolButton" name="toolButton_furos">
      <property name="geometry">
       <rect>
-       <x>250</x>
-       <y>60</y>
-       <width>25</width>
+       <x>270</x>
+       <y>90</y>
+       <width>31</width>
        <height>19</height>
       </rect>
      </property>
@@ -117,22 +115,9 @@
     <widget class="QToolButton" name="toolButton_geofones">
      <property name="geometry">
       <rect>
-       <x>250</x>
-       <y>120</y>
-       <width>25</width>
-       <height>19</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>...</string>
-     </property>
-    </widget>
-    <widget class="QToolButton" name="toolButton_criticas">
-     <property name="geometry">
-      <rect>
-       <x>600</x>
-       <y>60</y>
-       <width>25</width>
+       <x>270</x>
+       <y>160</y>
+       <width>31</width>
        <height>19</height>
       </rect>
      </property>
@@ -143,64 +128,33 @@
     <widget class="QPushButton" name="pushButton_process">
      <property name="geometry">
       <rect>
-       <x>190</x>
-       <y>160</y>
+       <x>220</x>
+       <y>200</y>
        <width>82</width>
-       <height>25</height>
+       <height>31</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
      </property>
      <property name="text">
       <string>Process</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_topo">
-     <property name="geometry">
-      <rect>
-       <x>360</x>
-       <y>100</y>
-       <width>251</width>
-       <height>21</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Topografia (curvas de nível)</string>
-     </property>
-    </widget>
-    <widget class="QComboBox" name="comboBox_shpTopo">
-     <property name="geometry">
-      <rect>
-       <x>360</x>
-       <y>120</y>
-       <width>231</width>
-       <height>22</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QToolButton" name="toolButton_topo">
-     <property name="geometry">
-      <rect>
-       <x>600</x>
-       <y>120</y>
-       <width>25</width>
-       <height>19</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>...</string>
-     </property>
-    </widget>
     <widget class="QLabel" name="label_Regressao">
      <property name="geometry">
       <rect>
-       <x>60</x>
+       <x>80</x>
        <y>10</y>
-       <width>111</width>
-       <height>21</height>
+       <width>161</width>
+       <height>31</height>
       </rect>
      </property>
      <property name="font">
       <font>
-       <pointsize>12</pointsize>
+       <pointsize>14</pointsize>
        <weight>75</weight>
        <bold>true</bold>
       </font>
@@ -209,44 +163,70 @@
       <string>Regressão</string>
      </property>
     </widget>
-    <widget class="QLabel" name="label_Simulacao_5">
+    <widget class="QToolButton" name="toolButton_criticas">
      <property name="geometry">
       <rect>
-       <x>450</x>
-       <y>10</y>
-       <width>111</width>
-       <height>21</height>
+       <x>790</x>
+       <y>90</y>
+       <width>31</width>
+       <height>19</height>
       </rect>
      </property>
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
      <property name="text">
-      <string>Simulação</string>
+      <string>...</string>
      </property>
     </widget>
     <widget class="QComboBox" name="comboBox_shpFuros_simular">
      <property name="geometry">
       <rect>
-       <x>360</x>
-       <y>180</y>
+       <x>550</x>
+       <y>230</y>
        <width>231</width>
        <height>22</height>
       </rect>
      </property>
     </widget>
+    <widget class="QComboBox" name="comboBox_shpTopo">
+     <property name="geometry">
+      <rect>
+       <x>550</x>
+       <y>160</y>
+       <width>231</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_zCriticas">
+     <property name="geometry">
+      <rect>
+       <x>550</x>
+       <y>50</y>
+       <width>311</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Área de simulação (polígono)</string>
+     </property>
+    </widget>
     <widget class="QLabel" name="label_furos_simular">
      <property name="geometry">
       <rect>
-       <x>360</x>
-       <y>160</y>
-       <width>281</width>
-       <height>16</height>
+       <x>550</x>
+       <y>200</y>
+       <width>391</width>
+       <height>20</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
      </property>
      <property name="text">
       <string>Posição dos Furos de Desmonte a Simular</string>
@@ -255,9 +235,9 @@
     <widget class="QToolButton" name="toolButton_furos_simular">
      <property name="geometry">
       <rect>
-       <x>600</x>
-       <y>180</y>
-       <width>25</width>
+       <x>790</x>
+       <y>230</y>
+       <width>31</width>
        <height>19</height>
       </rect>
      </property>
@@ -268,14 +248,80 @@
     <widget class="QPushButton" name="pushButton_OK">
      <property name="geometry">
       <rect>
-       <x>580</x>
-       <y>220</y>
+       <x>780</x>
+       <y>270</y>
        <width>41</width>
        <height>25</height>
       </rect>
      </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
      <property name="text">
       <string>OK</string>
+     </property>
+    </widget>
+    <widget class="QToolButton" name="toolButton_topo">
+     <property name="geometry">
+      <rect>
+       <x>790</x>
+       <y>160</y>
+       <width>31</width>
+       <height>19</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>...</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBox_shpZCriticas">
+     <property name="geometry">
+      <rect>
+       <x>550</x>
+       <y>90</y>
+       <width>231</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_topo">
+     <property name="geometry">
+      <rect>
+       <x>550</x>
+       <y>120</y>
+       <width>291</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Topografia (curvas de nível)</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_Simulacao_5">
+     <property name="geometry">
+      <rect>
+       <x>610</x>
+       <y>10</y>
+       <width>141</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>14</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Simulação</string>
      </property>
     </widget>
    </widget>
@@ -288,18 +334,18 @@
       <rect>
        <x>10</x>
        <y>20</y>
-       <width>671</width>
-       <height>361</height>
+       <width>921</width>
+       <height>451</height>
       </rect>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_txt">
      <property name="geometry">
       <rect>
-       <x>480</x>
-       <y>390</y>
-       <width>82</width>
-       <height>25</height>
+       <x>641</x>
+       <y>494</y>
+       <width>121</width>
+       <height>31</height>
       </rect>
      </property>
      <property name="text">
@@ -309,10 +355,10 @@
     <widget class="QPushButton" name="pushButton_imagem">
      <property name="geometry">
       <rect>
-       <x>580</x>
-       <y>390</y>
-       <width>101</width>
-       <height>25</height>
+       <x>780</x>
+       <y>494</y>
+       <width>151</width>
+       <height>31</height>
       </rect>
      </property>
      <property name="text">
@@ -322,27 +368,32 @@
     <widget class="QPushButton" name="pushButton_intxt">
      <property name="geometry">
       <rect>
-       <x>250</x>
-       <y>390</y>
-       <width>71</width>
-       <height>25</height>
+       <x>432</x>
+       <y>495</y>
+       <width>111</width>
+       <height>31</height>
       </rect>
      </property>
      <property name="text">
-      <string>import txt</string>
+      <string>import</string>
      </property>
     </widget>
     <widget class="QLabel" name="label__intxt">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>390</y>
-       <width>241</width>
-       <height>21</height>
+       <y>490</y>
+       <width>421</width>
+       <height>41</height>
       </rect>
      </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
      <property name="text">
-      <string>Já tem dados de carga e distâncias mínimas:</string>
+      <string>Já tenho dados de carga e distâncias mínimas:</string>
      </property>
     </widget>
    </widget>
@@ -354,10 +405,15 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>60</y>
+       <y>0</y>
        <width>171</width>
        <height>31</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
      </property>
      <property name="text">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Lei de atenuação:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -369,11 +425,16 @@
     <widget class="QPushButton" name="pushButton_leiAtenuacao">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>20</y>
-       <width>141</width>
-       <height>25</height>
+       <x>40</x>
+       <y>210</y>
+       <width>231</width>
+       <height>31</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
      </property>
      <property name="text">
       <string>Gerar Lei de Atenuação</string>
@@ -382,10 +443,10 @@
     <widget class="QTextBrowser" name="textBrowser_atenuacao">
      <property name="geometry">
       <rect>
-       <x>180</x>
-       <y>20</y>
-       <width>311</width>
-       <height>111</height>
+       <x>40</x>
+       <y>30</y>
+       <width>411</width>
+       <height>181</height>
       </rect>
      </property>
      <property name="frameShape">
@@ -404,11 +465,16 @@
     <widget class="QPushButton" name="pushButton_simular">
      <property name="geometry">
       <rect>
-       <x>310</x>
-       <y>350</y>
-       <width>91</width>
-       <height>25</height>
+       <x>360</x>
+       <y>460</y>
+       <width>133</width>
+       <height>33</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
      </property>
      <property name="text">
       <string>Simular Curva</string>
@@ -418,10 +484,15 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>160</y>
-       <width>101</width>
+       <y>260</y>
+       <width>121</width>
        <height>31</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
      </property>
      <property name="text">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Simulação&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -434,10 +505,15 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>190</y>
-       <width>251</width>
+       <y>290</y>
+       <width>441</width>
        <height>31</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
      </property>
      <property name="text">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Intervalo entre linhas de isovalores - opcional:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -447,13 +523,21 @@
      </property>
     </widget>
     <widget class="QLabel" name="label_Simulacao_4">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="geometry">
       <rect>
-       <x>450</x>
-       <y>170</y>
-       <width>241</width>
-       <height>171</height>
+       <x>510</x>
+       <y>280</y>
+       <width>421</width>
+       <height>211</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
      </property>
      <property name="tabletTracking">
       <bool>false</bool>
@@ -465,7 +549,7 @@
       <enum>QFrame::Box</enum>
      </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;A entrada de dados ao lado é opcional. Caso não queira usá-la a mantenha limpa.&lt;/p&gt;&lt;p&gt;OBS: antes de simular curva, certifique-se de que o combobox da aba &amp;quot;INPUT&amp;quot;, &amp;quot;Área de simulação (polígono)&amp;quot;, esteja preenchido com um arquivo de polígono, ele servirá para delimitar a área de simulação.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;A entrada de dados ao lado é opcional. Caso não queira usá-la é só manter limpa.&lt;/p&gt;&lt;p&gt;OBS: antes de clicar em 'Simular curva', certifique-se de que o combobox da aba &amp;quot;INPUT&amp;quot;, &amp;quot;Área de simulação (polígono)&amp;quot;, esteja preenchido com um arquivo de polígono, ele servirá para delimitar a área de simulação.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="scaledContents">
       <bool>true</bool>
@@ -481,10 +565,15 @@
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>390</y>
-       <width>691</width>
+       <y>500</y>
+       <width>921</width>
        <height>23</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
      </property>
      <property name="value">
       <number>0</number>
@@ -493,11 +582,16 @@
     <widget class="QLineEdit" name="lineEdit_iso">
      <property name="geometry">
       <rect>
-       <x>290</x>
-       <y>190</y>
-       <width>41</width>
+       <x>20</x>
+       <y>320</y>
+       <width>91</width>
        <height>31</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
      </property>
      <property name="inputMask">
       <string/>
@@ -506,11 +600,16 @@
     <widget class="QPushButton" name="pushButton_interp_graf">
      <property name="geometry">
       <rect>
-       <x>400</x>
-       <y>130</y>
-       <width>91</width>
-       <height>25</height>
+       <x>310</x>
+       <y>210</y>
+       <width>141</width>
+       <height>31</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
      </property>
      <property name="text">
       <string>Gerar Gráfico</string>
@@ -519,8 +618,8 @@
     <widget class="QLineEdit" name="lineEdit_a0">
      <property name="geometry">
       <rect>
-       <x>540</x>
-       <y>40</y>
+       <x>510</x>
+       <y>50</y>
        <width>41</width>
        <height>31</height>
       </rect>
@@ -535,8 +634,8 @@
     <widget class="QLineEdit" name="lineEdit_b0">
      <property name="geometry">
       <rect>
-       <x>540</x>
-       <y>70</y>
+       <x>510</x>
+       <y>80</y>
        <width>41</width>
        <height>31</height>
       </rect>
@@ -551,8 +650,8 @@
     <widget class="QLabel" name="label_a0">
      <property name="geometry">
       <rect>
-       <x>510</x>
-       <y>40</y>
+       <x>480</x>
+       <y>50</y>
        <width>31</width>
        <height>31</height>
       </rect>
@@ -567,8 +666,8 @@
     <widget class="QLabel" name="label_b0">
      <property name="geometry">
       <rect>
-       <x>510</x>
-       <y>70</y>
+       <x>480</x>
+       <y>80</y>
        <width>31</width>
        <height>31</height>
       </rect>
@@ -583,8 +682,8 @@
     <widget class="QLabel" name="label_c0">
      <property name="geometry">
       <rect>
-       <x>510</x>
-       <y>100</y>
+       <x>480</x>
+       <y>110</y>
        <width>31</width>
        <height>31</height>
       </rect>
@@ -599,8 +698,8 @@
     <widget class="QLineEdit" name="lineEdit_erro">
      <property name="geometry">
       <rect>
-       <x>540</x>
-       <y>130</y>
+       <x>510</x>
+       <y>140</y>
        <width>71</width>
        <height>31</height>
       </rect>
@@ -615,8 +714,8 @@
     <widget class="QLineEdit" name="lineEdit_c0">
      <property name="geometry">
       <rect>
-       <x>540</x>
-       <y>100</y>
+       <x>510</x>
+       <y>110</y>
        <width>41</width>
        <height>31</height>
       </rect>
@@ -631,11 +730,16 @@
     <widget class="QLabel" name="label_erro">
      <property name="geometry">
       <rect>
-       <x>510</x>
-       <y>130</y>
-       <width>31</width>
+       <x>470</x>
+       <y>140</y>
+       <width>51</width>
        <height>31</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
      </property>
      <property name="text">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Erro&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -647,11 +751,16 @@
     <widget class="QCheckBox" name="checkBox_levenberg">
      <property name="geometry">
       <rect>
-       <x>510</x>
-       <y>20</y>
-       <width>201</width>
-       <height>18</height>
+       <x>460</x>
+       <y>30</y>
+       <width>321</width>
+       <height>20</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
      </property>
      <property name="text">
       <string>Usar LEVENBERG-MARQUARDT</string>
@@ -670,49 +779,55 @@
       <rect>
        <x>10</x>
        <y>10</y>
-       <width>681</width>
-       <height>371</height>
+       <width>931</width>
+       <height>531</height>
       </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
      </property>
      <property name="html">
       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Aba &amp;quot;INPUT&amp;quot; — ala &amp;quot;Regressão&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;As camadas de &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Furos&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; e &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Geofones&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; da aba &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;&amp;quot;INPUT&amp;quot; — &amp;quot;Regressão&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; devem ser do tipo &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;ponto&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; e possuir os seguintes campos na tabela de atributos: &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Furos e Geofones&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-size:12pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Identificação do ponto (variável inteira): &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;Id&amp;quot;&lt;/span&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:12pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Identificação do desmonte ou plano de fogo executado (variável inteira): &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;Desmonte&amp;quot;&lt;/span&gt; &lt;/li&gt;&lt;/ul&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Furos&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-size:12pt;&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Sequência de detonação de cada furo (variável inteira): &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;Seq. D.&amp;quot;&lt;/span&gt;&lt;/li&gt;
-&lt;li style=&quot; font-size:12pt;&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Carga explosiva em kg (variável decimal — real): &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;Carga (KG)&amp;quot;&lt;/span&gt; &lt;/li&gt;&lt;/ul&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Geofones&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-size:12pt;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Valores de vibração (variável decimal — real): &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;PPV(mm/s)&amp;quot;&lt;/span&gt; ou &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;PVS(mm/s)&amp;quot;&lt;/span&gt; &lt;/li&gt;&lt;/ul&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Com esses dados, o programa consegue calcular as distâncias mínimas entre o aparelho de medição e o furo mais próximo presente na sequência de maior carga, correlacionando-as com o valor medido pelo geofone. Após pressionar o botão &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;&amp;quot;Process&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; da aba &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;&amp;quot;INPUT&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;, o programa gera uma tabela que pode ser exportada pelo usuário. Após essa etapa, é possível gerar a lei de atenuação clicando no botão &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;&amp;quot;Gerar Lei de Atenuação&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;, na aba &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;&amp;quot;OUTPUT&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;OBS. 1:&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;As geometrias contidas nos shapefiles de &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Furos&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; e &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Geofones&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; devem ser 3D (&lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;PointZ&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;) para a correta definição das distâncias mínimas. Caso sejam 2D, mas o usuário tenha inserido as cotas Z na tabela de atributos, o plugin solicitará que seja indicada a coluna que contém os dados de cota, caso não consiga identificá-la automaticamente. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Caso algum dos shapefiles seja 2D e não contenha informações de cota, o usuário poderá escolher a opção &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;&amp;quot;sem cota Z&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;. Ressalva-se, entretanto, que, nesse caso, os cálculos de distância serão realizados considerando uma superfície plana, com o valor &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;&amp;quot;0&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; atribuído à coordenada Z da camada. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;OBS. 2:&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;O campo &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;&amp;quot;Desmonte&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; poderá ser omitido em ambas as camadas quando as medições de campo tiverem sido realizadas para apenas um único evento, ou seja, quando tiver sido executado apenas um plano de fogo. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Aba &amp;quot;INPUT&amp;quot; — ala &amp;quot;Simulação&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Antes de iniciar a etapa de simulação, é necessário inserir três camadas na aba &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;&amp;quot;INPUT&amp;quot; — &amp;quot;Simulação&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;: &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;&amp;quot;Área de Simulação&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; — deve conter um polígono que definirá a área de interesse na qual o programa simulará as curvas de isovalores de vibração; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;&amp;quot;Topografia&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; — deve conter uma camada de topografia que cubra toda a área de simulação. Essa camada não deve ter uma extensão muito superior à do polígono da &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;&amp;quot;Área de Simulação&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;, a fim de evitar processamento desnecessário. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;É importante que a camada de topografia seja 3D, para fornecer a coordenada Z aos pontos simulados. Ela pode ser formada por uma nuvem de pontos ou por curvas de nível; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;&amp;quot;Posição dos Furos de Desmonte a Simular&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; — deve conter uma camada de furos com os mesmos campos existentes na tabela de atributos da camada de furos utilizada na aba &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;&amp;quot;Regressão&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;. Essa camada fornecerá os dados de carga explosiva em kg (&lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;&amp;quot;Carga (KG)&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;) e a sequência de detonação de cada furo (&lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;&amp;quot;Seq. D.&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;), além da posição em que ocorrerá o desmonte. Dessa forma, o usuário poderá simular a realização de um novo plano de fogo na área de simulação. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Opcionalmente, pode-se utilizar a mesma camada de furos empregada na aba &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;&amp;quot;Regressão&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;. Entretanto, nesse caso, estará sendo simulado um evento que já ocorreu, o que pode ser útil apenas para observar o funcionamento do programa. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:12pt;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Importar dados já consolidados:&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Nos casos em que o próprio usuário já tenha calculado as cargas das sequências e as distâncias mínimas e compilado esses dados em uma tabela, é possível importar essa tabela na aba &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;&amp;quot;PROCESS&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;, por meio do botão &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;&amp;quot;import txt&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Quando essa opção for utilizada, não será necessário inserir as camadas de &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Furos&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; e &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Geofones&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; na aba &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;&amp;quot;INPUT&amp;quot; — &amp;quot;Regressão&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;, nem pressionar o botão &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;&amp;quot;Process&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Campo &amp;quot;Seq. D.&amp;quot; e distâncias mínimas:&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;A coluna &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;&amp;quot;Seq. D.&amp;quot;&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; da tabela de atributos é responsável por definir a sequência de saída dos furos durante a detonação. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;No exemplo abaixo, &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;um&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; único furo está na sequência &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;0&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;, seguido por &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;três furos&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; na sequência &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;1&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; e por &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;cinco furos&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt; na sequência &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;2&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;... &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Em resumo, furos que detonam simultaneamente devem possuir o mesmo valor de sequência. &lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Nas situações em que os furos são detonados &lt;/span&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;um por vez&lt;/span&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;, haverá apenas um furo detonado por sequência. &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Aba &amp;quot;INPUT&amp;quot; — ala &amp;quot;Regressão&amp;quot;&lt;/span&gt; &lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;As camadas de &lt;span style=&quot; font-weight:600;&quot;&gt;Furos&lt;/span&gt; e &lt;span style=&quot; font-weight:600;&quot;&gt;Geofones&lt;/span&gt; da aba &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;INPUT&amp;quot; — &amp;quot;Regressão&amp;quot;&lt;/span&gt; devem ser do tipo &lt;span style=&quot; font-weight:600;&quot;&gt;ponto&lt;/span&gt; e possuir os seguintes campos na tabela de atributos: &lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Furos e Geofones&lt;/span&gt; &lt;/p&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot;&quot; align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Identificação do ponto (variável inteira): &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;Id&amp;quot;&lt;/span&gt;&lt;/li&gt;
+&lt;li style=&quot;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Identificação do desmonte ou plano de fogo executado (variável inteira): &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;Desmonte&amp;quot;&lt;/span&gt; &lt;/li&gt;&lt;/ul&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Furos&lt;/span&gt; &lt;/p&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot;&quot; align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Sequência de detonação de cada furo (variável inteira): &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;Seq. D.&amp;quot;&lt;/span&gt;&lt;/li&gt;
+&lt;li style=&quot;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Carga explosiva em kg (variável decimal — real): &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;Carga (KG)&amp;quot;&lt;/span&gt; &lt;/li&gt;&lt;/ul&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Geofones&lt;/span&gt; &lt;/p&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot;&quot; align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Valores de vibração (variável decimal — real): &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;PPV(mm/s)&amp;quot;&lt;/span&gt; ou &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;PVS(mm/s)&amp;quot;&lt;/span&gt; &lt;/li&gt;&lt;/ul&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Com esses dados, o programa consegue calcular as distâncias mínimas entre o aparelho de medição e o furo mais próximo presente na sequência de maior carga, correlacionando-as com o valor medido pelo geofone. Após pressionar o botão &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;Process&amp;quot;&lt;/span&gt; da aba &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;INPUT&amp;quot;&lt;/span&gt;, o programa gera uma tabela que pode ser exportada pelo usuário. Após essa etapa, é possível gerar a lei de atenuação clicando no botão &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;Gerar Lei de Atenuação&amp;quot;&lt;/span&gt;, na aba &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;OUTPUT&amp;quot;&lt;/span&gt;. &lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;OBS. 1:&lt;/span&gt; &lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;As geometrias contidas nos shapefiles de &lt;span style=&quot; font-weight:600;&quot;&gt;Furos&lt;/span&gt; e &lt;span style=&quot; font-weight:600;&quot;&gt;Geofones&lt;/span&gt; devem ser 3D (&lt;span style=&quot; font-weight:600;&quot;&gt;PointZ&lt;/span&gt;) para a correta definição das distâncias mínimas. Caso sejam 2D, mas o usuário tenha inserido as cotas Z na tabela de atributos, o plugin solicitará que seja indicada a coluna que contém os dados de cota, caso não consiga identificá-la automaticamente. &lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Caso algum dos shapefiles seja 2D e não contenha informações de cota, o usuário poderá escolher a opção &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;sem cota Z&amp;quot;&lt;/span&gt;. Ressalva-se, entretanto, que, nesse caso, os cálculos de distância serão realizados considerando uma superfície plana, com o valor &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;0&amp;quot;&lt;/span&gt; atribuído à coordenada Z da camada. &lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;OBS. 2:&lt;/span&gt; &lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;O campo &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;Desmonte&amp;quot;&lt;/span&gt; poderá ser omitido em ambas as camadas quando as medições de campo tiverem sido realizadas para apenas um único evento, ou seja, quando tiver sido executado apenas um plano de fogo. &lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Aba &amp;quot;INPUT&amp;quot; — ala &amp;quot;Simulação&amp;quot;&lt;/span&gt; &lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Antes de iniciar a etapa de simulação, é necessário inserir três camadas na aba &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;INPUT&amp;quot; — &amp;quot;Simulação&amp;quot;&lt;/span&gt;: &lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;Área de Simulação&amp;quot;&lt;/span&gt; — deve conter um polígono que definirá a área de interesse na qual o programa simulará as curvas de isovalores de vibração; &lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;Topografia&amp;quot;&lt;/span&gt; — deve conter uma camada de topografia que cubra toda a área de simulação. Essa camada não deve ter uma extensão muito superior à do polígono da &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;Área de Simulação&amp;quot;&lt;/span&gt;, a fim de evitar processamento desnecessário. &lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;É importante que a camada de topografia seja 3D, para fornecer a coordenada Z aos pontos simulados. Ela pode ser formada por uma nuvem de pontos ou por curvas de nível; &lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;Posição dos Furos de Desmonte a Simular&amp;quot;&lt;/span&gt; — deve conter uma camada de furos com os mesmos campos existentes na tabela de atributos da camada de furos utilizada na aba &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;Regressão&amp;quot;&lt;/span&gt;. Essa camada fornecerá os dados de carga explosiva em kg (&lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;Carga (KG)&amp;quot;&lt;/span&gt;) e a sequência de detonação de cada furo (&lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;Seq. D.&amp;quot;&lt;/span&gt;), além da posição em que ocorrerá o desmonte. Dessa forma, o usuário poderá simular a realização de um novo plano de fogo na área de simulação. &lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Opcionalmente, pode-se utilizar a mesma camada de furos empregada na aba &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;Regressão&amp;quot;&lt;/span&gt;. Entretanto, nesse caso, estará sendo simulado um evento que já ocorreu, o que pode ser útil apenas para observar o funcionamento do programa. &lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Importar dados já consolidados:&lt;/span&gt; &lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Nos casos em que o próprio usuário já tenha calculado as cargas das sequências e as distâncias mínimas e compilado esses dados em uma tabela, é possível importar essa tabela na aba &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;PROCESS&amp;quot;&lt;/span&gt;, por meio do botão &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;import&amp;quot;&lt;/span&gt;.&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Quando essa opção for utilizada, não será necessário inserir as camadas de &lt;span style=&quot; font-weight:600;&quot;&gt;Furos&lt;/span&gt; e &lt;span style=&quot; font-weight:600;&quot;&gt;Geofones&lt;/span&gt; na aba &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;INPUT&amp;quot; — &amp;quot;Regressão&amp;quot;&lt;/span&gt;, nem pressionar o botão &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;Process&amp;quot;&lt;/span&gt;. &lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Campo &amp;quot;Seq. D.&amp;quot; e distâncias mínimas:&lt;/span&gt; &lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;A coluna &lt;span style=&quot; font-weight:600;&quot;&gt;&amp;quot;Seq. D.&amp;quot;&lt;/span&gt; da tabela de atributos é responsável por definir a sequência de saída dos furos durante a detonação. &lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Na imagem abaixo, &lt;span style=&quot; font-weight:600;&quot;&gt;um&lt;/span&gt; único furo está na sequência &lt;span style=&quot; font-weight:600;&quot;&gt;0&lt;/span&gt;, seguido por &lt;span style=&quot; font-weight:600;&quot;&gt;três furos&lt;/span&gt; na sequência &lt;span style=&quot; font-weight:600;&quot;&gt;1&lt;/span&gt; e por &lt;span style=&quot; font-weight:600;&quot;&gt;cinco furos&lt;/span&gt; na sequência &lt;span style=&quot; font-weight:600;&quot;&gt;2&lt;/span&gt;... &lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Em resumo, furos que detonam simultaneamente devem possuir o mesmo valor de sequência.&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Ainda na imagem apresentada abaixo, considerando que todos os furos do desmonte possuem a mesma carga, o maior somatório de cargas ocorre na &lt;span style=&quot; font-weight:600;&quot;&gt;sequência 4&lt;/span&gt; (marcada em vermelho). Dessa forma, essa será a sequência considerada para o cálculo das distâncias. Para cada valor de vibração registrado por um geofone, será atribuída a distância até o furo mais próximo da sequência 4.&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Nas situações em que os furos são detonados &lt;span style=&quot; font-weight:600;&quot;&gt;um por vez&lt;/span&gt;, haverá apenas um furo detonado por sequência. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </widget>
