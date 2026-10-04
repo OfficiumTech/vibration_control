@@ -218,10 +218,10 @@ def ajustar_variograma(coords, valores):
 
     widget.parametros_confirmados.connect(salvar_parametros)
     
-    if hasattr(widget, "exec"):
-        resultado_dialogo = widget.exec()
-    else:
-        resultado_dialogo = widget.exec_()
+    #if hasattr(widget, "exec"):
+    resultado_dialogo = widget.exec()
+    """else:
+        resultado_dialogo = widget.exec_()"""
 
     dialog_code = getattr(QtWidgets.QDialog, "DialogCode", QtWidgets.QDialog)
 

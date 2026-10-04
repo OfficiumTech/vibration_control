@@ -282,10 +282,10 @@ def dialogo_escolher_campo_z(camada, nome_camada):
         return escolhido
     return None"""
     
-    if hasattr(dialog, "exec"):
-        resultado_dialogo = dialog.exec()
-    else:
-        resultado_dialogo = dialog.exec_()
+    #if hasattr(dialog, "exec"):
+    resultado_dialogo = dialog.exec()
+    """else:
+        resultado_dialogo = dialog.exec_()"""
 
     dialog_code = getattr(QDialog, "DialogCode", QDialog)
 
